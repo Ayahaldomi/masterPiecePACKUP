@@ -1,0 +1,159 @@
+﻿@model MasterPiece.ViewModel.ChatMessagesAndRooms
+
+@{
+    ViewBag.Title = "Chat Room";
+    Layout = "~/Views/Shared/_LayoutDoctor.cshtml";
+}
+<style>
+    #chat3 .form-control {
+        border-color: transparent;
+    }
+
+        #chat3 .form-control:focus {
+            border-color: transparent;
+            box-shadow: inset 0px 0px 0px 1px transparent;
+        }
+
+    .badge-dot {
+        border-radius: 50%;
+        height: 10px;
+        width: 10px;
+        margin-left: 2.9rem;
+        margin-top: -.75rem;
+    }
+
+
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+
+    .card.p-4.shadow-md {
+        background-color: #00000012;
+    }
+</style>
+
+<!-- Chat messages display area -->
+
+
+
+
+    <div class="container ">
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card" id="chat3" style="border-radius: 15px;">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
+
+                                <div class="p-3">
+
+                                    <div class="input-group rounded mb-3">
+                                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                                               aria-describedby="search-addon" />
+                                        <span class="input-group-text border-0" id="search-addon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </div>
+                                    <div data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow-y: auto;">
+                                        <ul class="list-unstyled mb-0">
+                                            
+                                            @Html.Partial("_ChatRoomDoctor", Model.Rooms)
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-lg-7 col-xl-8">
+
+                                <div id="chatMessages" class="pt-3 pe-3" style="position: relative; height: 400px; overflow-y: auto;">
+
+                                    @Html.Partial("_ChatMessagesPartial", Model.Messages)
+
+                                </div>
+
+                                <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                                         alt="avatar 3" style="width: 40px; height: 100%;">
+                                    @using (Html.BeginForm("SendMessage", "Chat", FormMethod.Post))
+                                    {
+                                        @Html.Hidden("chatRoomId", (int)ViewBag.ChatRoomId)
+                                        @Html.Hidden("senderId", (int)ViewBag.LabTechId)
+                                        @Html.Hidden("senderType", "LabTech")
+
+                                        @*<textarea id="messageInput" name="messageText" rows="3" class="form-control form-control-lg"></textarea>*@
+                                        <input type="text" class="form-control form-control-lg" id="messageInput"
+                                               placeholder="Type message" name="messageText">
+                                        <button type="submit" class="btn btn-primary mt-2">Send</button>
+                                    }
+                                    @*<input type="text" class="form-control form-control-lg" id="exampleFormControlInput2"
+                                               placeholder="Type message">
+                                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                                        <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+                                        <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>*@
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+@section Scripts {
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Update chat rooms every 1 minute
+            setInterval(function () {
+                $.get('@Url.Action("GetChatRooms", "Chat")', function (data) {
+                    $('#chatRoomsContainer').html(data);
+                });
+            }, 60000); // 60000 milliseconds = 1 minute
+
+            // Handle chat room click to load messages dynamically
+            $(document).on('click', '.chat-room-link', function () {
+                var chatRoomId = $(this).data('room-id');
+                $.get('@Url.Action("GetChatMessages", "Chat")', { chatRoomId: chatRoomId }, function (data) {
+                    $('#chatMessages').html(data);
+                    $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight); // Scroll to the bottom of the chat
+                });
+            });
+
+            // Poll for new messages every 5 seconds
+            setInterval(function () {
+                var chatRoomId = '@ViewBag.ChatRoomId';
+                if (chatRoomId) {
+                    $.get('@Url.Action("GetChatMessages", "Chat")', { chatRoomId: chatRoomId }, function (data) {
+                        $('#chatMessages').html(data);
+                        $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+                    });
+                }
+            }, 5000); // 5000 milliseconds = 5 seconds
+
+            // Scroll to the bottom of the chat messages div on page load
+            $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+        });
+    </script>
+}

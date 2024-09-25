@@ -1,0 +1,270 @@
+﻿@model MasterPiece.Models.Test_Order
+@{
+    ViewBag.Title = "AddPatientPayment";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    int? age = null;
+
+    if (Model.Patient.Date_Of_Birth.HasValue)
+    {
+        var birthDate = Model.Patient.Date_Of_Birth.Value;
+        var today = DateTime.Today;
+        age = today.Year - birthDate.Year;
+        if (birthDate.Date > today.AddYears(-age.Value)) { age--; }
+    }
+}
+
+
+<link rel="stylesheet" href="~/myContent/assets/css/styles1.css">
+
+<style>
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+    /* Style for the discount radio buttons */
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+    }
+
+    .form-check-input {
+        margin-right: 10px;
+        width: 20px;
+        height: 20px;
+        transform: scale(1.2); /* Make radio buttons slightly larger */
+        cursor: pointer;
+    }
+
+    .form-check-label {
+        font-size: 16px;
+        margin-right: 15px;
+        cursor: pointer;
+    }
+
+    .discount-group {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        justify-content: flex-start; /* Ensures the radio buttons are aligned */
+    }
+
+    .discount-label {
+        margin-right: 15px;
+        font-weight: bold;
+    }
+
+    .total-label {
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .col-sm-10 {
+        display: flex;
+        align-items: center;
+    }
+
+    #amountPaidStatus {
+        margin-left: 10px;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+        #amountPaidStatus.red {
+            color: red;
+        }
+
+        #amountPaidStatus.green {
+            color: green;
+        }
+
+    .card.p-4.shadow-md {
+        background-color: #00000012;
+    }
+</style>
+
+<div class="card">
+    <div class="container mt-5">
+        <h2 class="mb-4">Payment</h2>
+        <form>
+            <div class="container mt-4">
+                <div class="card p-4 shadow-md">
+                    <div class="row mt-4">
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="patientId" class="fw-bolder">Patient ID:</label>
+                            <p class="ms-2">@Model.Patient.Patient_ID</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="fullName" class="fw-bolder">Full Name:</label>
+                            <p class="ms-2">@Model.Patient.Full_Name</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="age" class="fw-bolder">Age:</label>
+                            <p class="ms-2">
+                                @if (Model.Patient.Date_Of_Birth.HasValue)
+                                {
+                                    <span>@Model.Patient.Date_Of_Birth.Value.ToString("dd/MM/yyyy") (Age: @age)</span>
+                                }
+                                else
+                                {
+                                    <span>Date of Birth: N/A</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="gender" class="fw-bolder">Gender:</label>
+                            <p class="ms-2">@Model.Patient.Gender</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="testOrder" class="fw-bolder">Test Order:</label>
+                            <p class="ms-2">@Model.Order_ID</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <br>
+
+
+        </form>
+
+        <h3 class="mt-5">Tests Ordered</h3>
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Test ID</th>
+                    <th>Test Name</th>
+                    <th>Test Description</th>
+                    <th>Test Price</th>
+                </tr>
+            </thead>
+            <tbody id="testsTableBody">
+                <!-- Dynamically added test rows will appear here -->
+                @foreach (var test in Model.Test_Order_Tests)
+                {
+                    <tr>
+                        <td>@test.Test_ID</td>
+                        <td>@test.Test.Test_Name</td>
+                        <td>@test.Test.Sample_Type</td>
+                        <td>@test.Test.Price</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <form action="/Admin/AddPatientPayment" method="post">
+            <input type="hidden" value="@Model.Order_ID" name="Order_ID"/>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label discount-label">Discount</label>
+                <div class="col-sm-10 discount-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Discount_Persent" id="discount10" value="10" onclick="applyDiscount(10)"  @(Model.Discount_Persent == 10 ? "checked" : "")>
+                        <label class="form-check-label" for="discount10">10%</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Discount_Persent" id="discount20" value="20" onclick="applyDiscount(20)"  @(Model.Discount_Persent == 20 ? "checked" : "")>
+                        <label class="form-check-label" for="discount20">20%</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Discount_Persent" id="discount30" value="30" onclick="applyDiscount(30)"  @(Model.Discount_Persent == 30 ? "checked" : "")>
+                        <label class="form-check-label" for="discount30">30%</label>
+                    </div>
+                    <div class="form-check">
+                        <button class="btn btn-outline-warning m-1" id="removeDiscountBtn" onclick="removeDiscount()">Remove Discount</button>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="form-group row">
+                <label for="patientId" class="col-sm-2 col-form-label">Total</label>
+                <span class="col-sm-2 col-form-label" id="totalPrice">
+                    @(Model.Discount_Persent == null
+        ? (Model.Total_Price.HasValue ? Model.Total_Price.Value.ToString("F2") : "0.00")
+        : (Model.Total_Price.HasValue
+            ? (Model.Total_Price.Value - (Model.Total_Price.Value * (Model.Discount_Persent.Value / 100))).ToString("F2")
+            : "0.00")) JOD
+                </span>
+
+                <label for="amountPaid" class="col-sm-2 col-form-label">Amount Paid</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="amountPaid" placeholder="Enter amount" name="Amount_Paid">
+                    <span id="amountPaidStatus" class="col-form-label"></span> <!-- Status span -->
+                </div>
+            </div>
+
+            <!-- The Save Payment button, now with the onclick event -->
+            <button type="submit" class="btn btn-outline-success m-1" onclick="validatePayment()">Save Payment</button>
+
+        </form>
+      </div>
+    
+
+</div>
+<script>
+    // Store the original price to reset when discount is removed
+    let originalPrice = @Model.Total_Price; // Replace with your actual original price
+    let totalPriceElement = document.querySelector('#totalPrice');
+    applyDiscount(@Model.Discount_Persent);
+    // Function to apply a discount
+    function applyDiscount(discountPercentage) {
+        const discountedPrice = originalPrice - (originalPrice * (discountPercentage / 100));
+        totalPriceElement.innerText = `${discountedPrice.toFixed(2)} JOD`; // Update the displayed total
+    }
+
+    // Function to remove the discount and reset the total price
+    function removeDiscount() {
+        // Reset the total price to the original value
+        totalPriceElement.innerText = `${originalPrice.toFixed(2)} JOD`;
+
+        // Uncheck the selected radio button (if any)
+        const selectedRadio = document.querySelector('input[name="discountOptions"]:checked');
+        if (selectedRadio) {
+            selectedRadio.checked = false; // Uncheck the radio button
+        }
+    }
+    validatePayment()
+    // Function to validate the payment when Save Payment is clicked
+    function validatePayment() {
+        const amountPaidInput = document.getElementById('amountPaid');
+        const amountPaid = parseFloat('@(Model.Amount_Paid ?? 0)');         // parseFloat(amountPaidInput.value);
+        const total = parseFloat(totalPriceElement.innerText.replace(' JOD', ''));
+        const amountPaidStatus = document.getElementById('amountPaidStatus');
+
+        if (isNaN(amountPaid)) {
+            amountPaidStatus.innerText = `Please enter a valid amount.`;
+            amountPaidStatus.classList.add('red');
+            amountPaidStatus.classList.remove('green');
+            return;
+        }
+
+        if (amountPaid < total) {
+            amountPaidStatus.innerText = `Paid: ${amountPaid.toFixed(2)} JOD (Insufficient)`;
+            amountPaidStatus.classList.add('red');
+            amountPaidStatus.classList.remove('green');
+        } else if (amountPaid >= total) {
+            amountPaidStatus.innerText = `Paid: ${amountPaid.toFixed(2)} JOD (Sufficient)`;
+            amountPaidStatus.classList.add('green');
+            amountPaidStatus.classList.remove('red');
+        }
+    }
+</script>
+
+
+

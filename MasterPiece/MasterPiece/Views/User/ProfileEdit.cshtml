@@ -1,0 +1,169 @@
+﻿@model MasterPiece.Models.Patient
+
+<style>
+    body {
+        background-color: #eee;
+    }
+
+    .card {
+        margin: auto;
+    }
+
+    html, body, .intro {
+        height: 100%;
+    }
+
+    table td, table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .mask-custom {
+        background: rgba(24, 24, 16, .2);
+        border-radius: 2em;
+        backdrop-filter: blur(25px);
+        border: 2px solid rgba(255, 255, 255, 0.05);
+        background-clip: padding-box;
+        box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+    }
+
+    .card.mb-4 {
+        height: 100%;
+        padding: 15px;
+    }
+
+    .mb-4 {
+        margin-bottom: 0rem !important;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100% !important;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+
+<link rel="stylesheet" href="~/myContent/css/styles1.css">
+
+<section>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">User</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <img src="~/myContent/img/blank-profile-picture-973460_960_720.jpg" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                        <h5 class="my-3">@Model.Full_Name</h5>
+                        <p class="text-muted mb-1">@Model.Gender</p>
+                        <div class="d-flex justify-content-center mb-2">
+                            <a href="@Url.Action("Profile", "User", new {id = Model.Patient_ID})"> <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">Go Back To Profile</button> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="container">
+                        <h2>Patient Form</h2>
+                        <form id="patient-form" method="post" action="/User/ProfileEdit">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="patient-id">Patient ID</label>
+                                    <input type="hidden" name="Patient_ID" value="@Model.Patient_ID" />
+                                    <input type="text" id="fpatient-id" name="Patient_ID" disabled value="@Model.Patient_ID">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="full-name">Full Name</label>
+                                    <input type="text" id="full-name" name="Full_Name" disabled value="@Model.Full_Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth</label>
+                                    <input type="date" id="dob" name="Date_Of_Birth"  value="@(Model.Date_Of_Birth.HasValue ? Model.Date_Of_Birth.Value.ToString("yyyy-MM-dd") : string.Empty)" disabled>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select id="gender" name="gender" disabled>
+                                        <option selected value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="marital-status">Marital Status</label>
+                                    <select id="marital-status" name="marital-status" disabled>
+                                        <option selected value="single">Single</option>
+                                        <option value="married">Married</option>
+                                        <option value="divorced">Divorced</option>
+                                        <option value="widowed">Widowed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nationality">Nationality</label>
+                                    <input type="text" id="nationality" name="Nationality" disabled value="@Model.Nationality">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone-number">Phone Number</label>
+                                    <input type="tel" id="phone-number" name="Phone_Number" disabled value="@Model.Phone_Number">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="home-address">Home Address</label>
+                                    <input type="text" id="home-address" name="Home_Address" disabled value="@Model.Home_Address">
+                                </div>
+                            </div>
+
+                            <div class="form-buttons">
+                                <button type="button" class="btn btn-outline-secondary m-1" id="edit-button">Edit</button>
+                                <button type="submit" class="btn btn-outline-primary m-1" id="save-button" style="display:none;">Save Edit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Function to enable form fields except the Patient ID
+    function enableFormFields() {
+        // Select all the input and select elements in the form except the Patient ID
+        let formElements = document.querySelectorAll('#patient-form input:not(#fpatient-id), #patient-form select');
+
+        // Loop through the elements and enable them
+        formElements.forEach(function (element) {
+            element.disabled = false;
+        });
+
+        // Show the save button after enabling the form
+        document.getElementById('save-button').style.display = 'inline-block';
+    }
+
+    // Add event listener to the "Edit" button
+    document.getElementById('edit-button').addEventListener('click', function () {
+        enableFormFields();
+    });
+</script>

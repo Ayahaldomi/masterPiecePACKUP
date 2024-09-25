@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MasterPieceModelStoreContainer" CdmEntityContainer="MasterPieceEntities">
+    <EntitySetMapping Name="Appointments">
+      <EntityTypeMapping TypeName="MasterPieceModel.Appointment">
+        <MappingFragment StoreEntitySet="Appointments">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
+          <ScalarProperty Name="Gender" ColumnName="Gender" />
+          <ScalarProperty Name="Date_Of_Birth" ColumnName="Date_Of_Birth" />
+          <ScalarProperty Name="Email_Address" ColumnName="Email_Address" />
+          <ScalarProperty Name="Phone_Number" ColumnName="Phone_Number" />
+          <ScalarProperty Name="Home_Address" ColumnName="Home_Address" />
+          <ScalarProperty Name="Date_Of_Appo" ColumnName="Date_Of_Appo" />
+          <ScalarProperty Name="Total_price" ColumnName="Total_price" />
+          <ScalarProperty Name="Amount_paid" ColumnName="Amount_paid" />
+          <ScalarProperty Name="Billing_ID" ColumnName="Billing_ID" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Appointments_Tests">
+      <EntityTypeMapping TypeName="MasterPieceModel.Appointments_Tests">
+        <MappingFragment StoreEntitySet="Appointments_Tests">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Appointment_ID" ColumnName="Appointment_ID" />
+          <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ChatMessages">
+      <EntityTypeMapping TypeName="MasterPieceModel.ChatMessage">
+        <MappingFragment StoreEntitySet="ChatMessages">
+          <ScalarProperty Name="ChatMessage_ID" ColumnName="ChatMessage_ID" />
+          <ScalarProperty Name="ChatRoom_ID" ColumnName="ChatRoom_ID" />
+          <ScalarProperty Name="SenderId" ColumnName="SenderId" />
+          <ScalarProperty Name="MessageText" ColumnName="MessageText" />
+          <ScalarProperty Name="SentAt" ColumnName="SentAt" />
+          <ScalarProperty Name="SenderType" ColumnName="SenderType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ChatRooms">
+      <EntityTypeMapping TypeName="MasterPieceModel.ChatRoom">
+        <MappingFragment StoreEntitySet="ChatRooms">
+          <ScalarProperty Name="hasUnreadMessages" ColumnName="hasUnreadMessages" />
+          <ScalarProperty Name="ChatRoom_ID" ColumnName="ChatRoom_ID" />
+          <ScalarProperty Name="LabTech_ID" ColumnName="LabTech_ID" />
+          <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+          <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Contacts">
+      <EntityTypeMapping TypeName="MasterPieceModel.Contact">
+        <MappingFragment StoreEntitySet="Contact">
+          <ScalarProperty Name="contact_id" ColumnName="contact_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="sub" ColumnName="sub" />
+          <ScalarProperty Name="message" ColumnName="message" />
+          <ScalarProperty Name="sent_date" ColumnName="sent_date" />
+          <ScalarProperty Name="admin_response" ColumnName="admin_response" />
+          <ScalarProperty Name="response_date" ColumnName="response_date" />
+          <ScalarProperty Name="status" ColumnName="status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Feedbacks">
+      <EntityTypeMapping TypeName="MasterPieceModel.Feedback">
+        <MappingFragment StoreEntitySet="Feedback">
+          <ScalarProperty Name="Feedback_ID" ColumnName="Feedback_ID" />
+          <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Lab_Tech">
+      <EntityTypeMapping TypeName="MasterPieceModel.Lab_Tech">
+        <MappingFragment StoreEntitySet="Lab_Tech">
+          <ScalarProperty Name="Tech_ID" ColumnName="Tech_ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Package_Tests">
+      <EntityTypeMapping TypeName="MasterPieceModel.Package_Tests">
+        <MappingFragment StoreEntitySet="Package_Tests">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Package_ID" ColumnName="Package_ID" />
+          <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Packages">
+      <EntityTypeMapping TypeName="MasterPieceModel.Package">
+        <MappingFragment StoreEntitySet="Packages">
+          <ScalarProperty Name="Old_price" ColumnName="Old_price" />
+          <ScalarProperty Name="Package_ID" ColumnName="Package_ID" />
+          <ScalarProperty Name="Package_Name" ColumnName="Package_Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="Picture" ColumnName="Picture" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Patients">
+      <EntityTypeMapping TypeName="MasterPieceModel.Patient">
+        <MappingFragment StoreEntitySet="Patients">
+          <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+          <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
+          <ScalarProperty Name="Date_Of_Birth" ColumnName="Date_Of_Birth" />
+          <ScalarProperty Name="Gender" ColumnName="Gender" />
+          <ScalarProperty Name="Marital_Status" ColumnName="Marital_Status" />
+          <ScalarProperty Name="Nationality" ColumnName="Nationality" />
+          <ScalarProperty Name="Phone_Number" ColumnName="Phone_Number" />
+          <ScalarProperty Name="Home_Address" ColumnName="Home_Address" />
+          <ScalarProperty Name="Note" ColumnName="Note" />
+          <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Test_Order">
+      <EntityTypeMapping TypeName="MasterPieceModel.Test_Order">
+        <MappingFragment StoreEntitySet="Test_Order">
+          <ScalarProperty Name="Order_ID" ColumnName="Order_ID" />
+          <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Tech_ID" ColumnName="Tech_ID" />
+          <ScalarProperty Name="Total_Price" ColumnName="Total_Price" />
+          <ScalarProperty Name="Discount_Persent" ColumnName="Discount_Persent" />
+          <ScalarProperty Name="Amount_Paid" ColumnName="Amount_Paid" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Test_Order_Tests">
+      <EntityTypeMapping TypeName="MasterPieceModel.Test_Order_Tests">
+        <MappingFragment StoreEntitySet="Test_Order_Tests">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Order_ID" ColumnName="Order_ID" />
+          <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+          <ScalarProperty Name="Result" ColumnName="Result" />
+          <ScalarProperty Name="Date_Of_Result" ColumnName="Date_Of_Result" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tests">
+      <EntityTypeMapping TypeName="MasterPieceModel.Test">
+        <MappingFragment StoreEntitySet="Tests">
+          <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+          <ScalarProperty Name="Test_Name" ColumnName="Test_Name" />
+          <ScalarProperty Name="Alternative_Name" ColumnName="Alternative_Name" />
+          <ScalarProperty Name="Components" ColumnName="Components" />
+          <ScalarProperty Name="Normal_Range" ColumnName="Normal_Range" />
+          <ScalarProperty Name="Unit" ColumnName="Unit" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="Inventory" ColumnName="Inventory" />
+          <ScalarProperty Name="Sample_Type" ColumnName="Sample_Type" />
+          <ScalarProperty Name="Expiration_Date" ColumnName="Expiration_Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

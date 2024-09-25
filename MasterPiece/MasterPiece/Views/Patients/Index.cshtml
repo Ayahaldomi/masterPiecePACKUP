@@ -1,0 +1,45 @@
+﻿<!-- Reference jQuery first -->
+<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+
+<!-- Reference SignalR client library -->
+<script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+
+<!-- The dynamically generated SignalR hubs script -->
+<script src="~/signalr/hubs"></script>
+
+<script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+<script src="~/signalr/hubs"></script> <!-- This script is dynamically generated -->
+
+
+<div id="chatMessages" style="height: 300px; border: 1px solid #ccc; overflow-y: scroll;"></div>
+
+<input type="text" id="messageInput" placeholder="Enter your message" />
+<button id="sendButton" class="btn btn-primary">Send</button>
+
+<script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script> <!-- SignalR client library -->
+<script src="~/signalr/hubs"></script> <!-- SignalR hubs -->
+
+<script type="text/javascript">
+    $(function () {
+        // Connect to the SignalR Hub
+        var chatHub = $.connection.chatHub;
+
+        // Function to receive messages and append them to the chat window
+        chatHub.client.broadcastMessage = function (sender, message) {
+            $('#chatMessages').append('<div><strong>' + sender + ':</strong> ' + message + '</div>');
+            $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+        };
+
+        // Start the SignalR connection
+        $.connection.hub.start().done(function () {
+            $('#sendButton').click(function () {
+                var message = $('#messageInput').val();
+                var sender = 'Patient'; // You can replace this with dynamic user info
+
+                // Call the SendMessage method on the server
+                chatHub.server.sendMessage(sender, message);
+                $('#messageInput').val(''); // Clear the input after sending
+            });
+        });
+    });
+</script>

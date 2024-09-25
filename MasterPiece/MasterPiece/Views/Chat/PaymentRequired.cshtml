@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "PaymentRequired";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Payment Required";
+}
+
+<h2>Payment Required</h2>
+
+<p>You have reached the limit of 2 free messages. To continue chatting with the lab technician, please make a payment.</p>
+
+<!-- Button to redirect the patient to process the payment -->
+<a href="@Url.Action("ProcessPayment", "Chat", new { patientId = ViewBag.PatientId })" class="btn btn-primary">Make Payment</a>
+
+<p class="mt-3">
+    Once the payment is completed, you will be able to continue the conversation with your lab technician.
+</p>
+

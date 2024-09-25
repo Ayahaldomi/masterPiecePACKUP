@@ -1,0 +1,161 @@
+﻿@model IEnumerable<MasterPiece.Models.Feedback>
+
+@{
+    ViewBag.Title = "FeedBacks";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+    }
+
+    .card {
+        padding: 1em;
+        overflow-x: auto;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+
+    /* Status colors */
+    .status-pending {
+        color: yellow;
+    }
+
+    .status-Approved {
+        color: green;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card shadow p-4 mb-5 bg-white rounded">
+        <h2 class="text-center">FeedBacks</h2>
+
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Message)</th>
+                        <th>@Html.DisplayNameFor(model => model.Status)</th>
+                        <th>
+                            <label>Full Name</label>
+                        </th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Message)</td>
+                            <td>
+                                <span class="@((item.Status == "Pending") ? "text-warning" : "text-success")">
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </span>
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Patient.Full_Name)</td>
+                            <td class="text-center">
+                                @if (item.Status == "Pending")
+                                {
+                                    @Html.ActionLink("Approve", "ApproveFeedBack", new { id = item.Feedback_ID }, new { @class = "btn btn-sm btn-outline-success" })
+                                }
+                                |
+                                <!-- Delete button to open delete confirmation modal -->
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteFeedbackModal"
+                                        onclick="setDeleteFeedback('@item.Feedback_ID', '@item.Message')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Create Feedback Modal -->
+<div class="modal fade" id="createFeedbackModal" tabindex="-1" aria-labelledby="createFeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createFeedbackModalLabel">Create New Feedback</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create Feedback Form -->
+                @using (Html.BeginForm("CreateFeedback", "Admin", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="Message" class="form-label">Feedback Message</label>
+                        <textarea class="form-control" id="Message" name="Message" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Patient_ID" class="form-label">Patient ID</label>
+                        <input type="number" class="form-control" id="Patient_ID" name="Patient_ID" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Feedback Modal -->
+<div class="modal fade" id="deleteFeedbackModal" tabindex="-1" aria-labelledby="deleteFeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFeedbackModalLabel">Delete Feedback</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this feedback: <strong id="deleteFeedbackMessage"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <!-- The form that submits the Feedback_ID to the controller -->
+                @using (Html.BeginForm("DeleteFeedback", "Admin", FormMethod.Post))
+                {
+                    <!-- Hidden input to store the feedback ID -->
+                    @Html.Hidden("Feedback_ID", "", new { id = "delete_Feedback_ID" })
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // Set the feedback details for the Delete Confirmation Modal
+    function setDeleteFeedback(id, message) {
+        document.getElementById('delete_Feedback_ID').value = id;
+        document.getElementById('deleteFeedbackMessage').innerText = message;
+    }
+
+    // Approve feedback by changing status to 'Approved'
+    function approveFeedback(feedbackId) {
+        // Example of sending AJAX request to approve the feedback
+        $.post('/Admin/ApproveFeedback', { id: feedbackId }, function () {
+            location.reload(); // Reload the page after approving feedback
+        });
+    }
+</script>

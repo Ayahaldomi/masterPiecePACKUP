@@ -1,0 +1,112 @@
+﻿@model MasterPiece.Models.Lab_Tech
+
+@{
+    ViewBag.Title = "Employee Profile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+    }
+
+    .card {
+        padding: 1em;
+        overflow-x: auto;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+</style>
+<div class="container mt-5">
+    <div class="card shadow p-4 mb-5 bg-white rounded">
+        <h2 class="text-center">Employee Profile</h2>
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="~/myContent/img/blank-profile-picture-973460_960_720.jpg" class="rounded-circle img-fluid" alt="Employee Photo" width="150"/>
+                <h3 class="mt-3">@Model.Name</h3>
+                <p class="text-muted">@Model.Status</p>
+            </div>
+            <div class="col-md-8">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th>Name:</th>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>@Model.Status</td>
+                        </tr>
+                        <tr>
+                            <th>Password:</th>
+                            <td>*********</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-end">
+                    <!-- Edit Profile Button triggers modal -->
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Edit Profile Form -->
+                @using (Html.BeginForm("UpdateProfile", "Admin", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Tech_ID)
+
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Full Name</label>
+                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @required = "required" })
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control", @type = "email", @required = "required" })
+                    </div>
+                    <div class="mb-3">
+                        <label for="Password" class="form-label">Password</label>
+                        @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @required = "required" })
+                    </div>
+                    <!-- Status is displayed here, but cannot be changed -->
+                    <div class="mb-3">
+                        <label for="Status" class="form-label">Status</label>
+                        <input type="text" class="form-control" id="Status" value="@Model.Status" disabled />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

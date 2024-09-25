@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "PatientChatRooms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<MasterPiece.Models.ChatRoom> 
+@{
+    ViewBag.Title = "Your Chat Rooms";
+}
+
+<h2>Your Chat Rooms</h2>
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Lab Technician</th>
+                <th>Chat Created At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var chatRoom in Model)
+            {
+                <tr>
+                    <td>@chatRoom.Lab_Tech.Name</td> <!-- Display the lab technician's name -->
+                    <td>
+
+                                        @(chatRoom.CreatedAt.HasValue
+        ? chatRoom.CreatedAt.Value.ToString("MMMM dd, yyyy hh:mm tt")
+        : "N/A")
+                                    </td> <!-- Display the creation date of the chat room -->
+                    <td>
+                        <a href="@Url.Action("Chat2", "Chat", new { chatRoomId = chatRoom.ChatRoom_ID })" class="btn btn-primary">
+                            Enter Chat
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>You do not have any active chat rooms with lab technicians.</p>
+}
+

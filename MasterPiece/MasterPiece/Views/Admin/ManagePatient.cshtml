@@ -1,0 +1,156 @@
+﻿@model IEnumerable<MasterPiece.Models.Patient>
+@{
+    ViewBag.Title = "ManagePatient";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+    }
+
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+
+    .pagination {
+        justify-content: center;
+    }
+</style>
+
+<div class="card">
+    <div class="container">
+        <h1 class="text-center">Manage Patients</h1>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="input-group mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by Patient Name or ID" aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="button" onclick="searchPatients()">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-striped" id="patientTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Patient ID</th>
+                        <th scope="col">Patient Name</th>
+                        <th scope="col">Patient Phone Number</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="patientTableBody">
+                    @foreach (var patient in Model)
+                    {
+                        <tr>
+                            <td>@patient.Patient_ID</td>
+                            <td>@patient.Full_Name</td>
+                            <td>@patient.Phone_Number</td>
+                            <td>
+                                <a href="@Url.Action("ManagePatientDetails", "Admin", new { patientID = patient.Patient_ID })">
+                                    <button class="btn btn-primary btn-sm">View Details</button>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination controls -->
+        <nav>
+            <ul class="pagination" id="paginationControls"></ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    // Number of rows per page
+    const rowsPerPage = 5;
+    let currentPage = 1;
+
+    // Search functionality
+    function searchPatients() {
+        const searchString = document.getElementById('searchInput').value.toLowerCase();
+        const tableRows = document.querySelectorAll('#patientTableBody tr');
+
+        tableRows.forEach(row => {
+            const patientID = row.cells[0].textContent.toLowerCase();
+            const patientName = row.cells[1].textContent.toLowerCase();
+
+            if (patientID.includes(searchString) || patientName.includes(searchString)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Reset pagination after search
+        paginate();
+    }
+
+    // Pagination functionality
+    function paginate() {
+        const tableRows = document.querySelectorAll('#patientTableBody tr');
+        const totalRows = Array.from(tableRows).filter(row => row.style.display !== 'none').length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        // Clear pagination controls
+        const paginationControls = document.getElementById('paginationControls');
+        paginationControls.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="javascript:void(0)" onclick="goToPage(${i})">${i}</a>`;
+            paginationControls.appendChild(li);
+        }
+
+        showPage(currentPage);
+    }
+
+    // Show rows for the current page
+    function showPage(page) {
+        const tableRows = document.querySelectorAll('#patientTableBody tr');
+        let visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
+        currentPage = page;
+
+        // Hide all rows
+        tableRows.forEach(row => row.style.display = 'none');
+
+        // Show only the rows for the current page
+        for (let i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < visibleRows.length; i++) {
+            visibleRows[i].style.display = '';
+        }
+
+        paginate();
+    }
+
+    // Handle page change
+    function goToPage(page) {
+        currentPage = page;
+        showPage(page);
+    }
+
+    // Initial pagination setup
+    window.onload = function () {
+        paginate();
+    }
+</script>

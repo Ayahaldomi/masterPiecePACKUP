@@ -1,0 +1,130 @@
+﻿@model IEnumerable<MasterPiece.Models.AppointmentViewModel>
+
+@{
+    ViewBag.Title = "Appointment";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+    }
+
+    .card {
+        padding: 1em;
+        overflow-x: auto;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+</style>
+
+<div class="container">
+    <div class="card shadow p-3 mb-5 bg-white rounded">
+        <h2 class="text-center">Appointment</h2>
+
+
+
+        <!-- Filter Buttons -->
+        <div class="filter-buttons text-center mb-3">
+            <button class="btn btn-outline-primary" onclick="filterAppointments('all')">All</button>
+            <button class="btn btn-outline-primary" onclick="filterAppointments('today')">Today's Appointments</button>
+            <button class="btn btn-outline-primary" onclick="filterAppointments('pending')">Pending</button>
+            <button class="btn btn-outline-primary" onclick="filterAppointments('completed')">Completed</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered" id="appointmentTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Gender</th>
+                        <th>Date Of Birth</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                        <th>Home Address</th>
+                        <th>Date Of Appointment</th>
+                        <th>Total price</th>
+                        <th>Amount paid</th>
+                        <th>Status</th>
+                        <th>Tests Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="appointment-row"
+                            data-status="@item.Status"
+                            data-date="@(item.Date_Of_Appo.HasValue ? item.Date_Of_Appo.Value.ToString("yyyy-MM-dd") : "No date available")">
+                            <td>@Html.DisplayFor(modelItem => item.Full_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Gender)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Date_Of_Birth)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email_Address)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Phone_Number)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Home_Address)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Date_Of_Appo)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Total_price)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Amount_paid)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                            <td>
+                                @if (item.TestNames != null && item.TestNames.Any())
+                                {
+                                    <span>@string.Join(", ", item.TestNames)</span>
+                                }
+                                else
+                                {
+                                    <span>No tests</span>
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionLink("Complete Appointment", "Edit", new { id = item.ID }, new { @class = "btn btn-sm btn-warning" }) |
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function filterAppointments(filter) {
+        const rows = document.querySelectorAll('.appointment-row');
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in 'yyyy-mm-dd' format
+
+        rows.forEach(row => {
+            const appointmentDate = row.getAttribute('data-date');
+            const status = row.getAttribute('data-status').toLowerCase();
+
+            // Default to show all rows
+            let showRow = true;
+
+            if (filter === 'today') {
+                showRow = appointmentDate === today;
+            } else if (filter === 'pending') {
+                showRow = status === 'pending';
+            } else if (filter === 'completed') {
+                showRow = status === 'completed';
+            }
+
+            // Toggle row visibility based on filter
+            row.style.display = showRow ? '' : 'none';
+        });
+    }
+</script>
+

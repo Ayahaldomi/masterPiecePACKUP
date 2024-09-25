@@ -1,0 +1,230 @@
+﻿@model IEnumerable<MasterPiece.Models.Test_Order>
+@{
+    ViewBag.Title = "TestResults";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-container, .table-container {
+        margin-top: 20px;
+    }
+
+    .custom-width {
+        width: 50% !important;
+    }
+
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+    }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination button {
+            border: none;
+            background-color: #007bff;
+            color: white;
+            padding: 0.5em 1em;
+            cursor: pointer;
+        }
+
+            .pagination button:disabled {
+                background-color: #ccc;
+            }
+
+    /* Status background color styles */
+    .status-completed {
+        background-color: green;
+        color: white;
+        padding: 0.25em 0.5em;
+        border-radius: 5px;
+    }
+
+    .status-pending {
+        background-color: yellow;
+        color: black;
+        padding: 0.25em 0.5em;
+        border-radius: 5px;
+    }
+
+    /* Filter buttons styles */
+    .filter-buttons {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .filter-buttons button {
+            margin-right: 10px;
+        }
+</style>
+
+<div class="card">
+    <div class="container">
+        <h1 class="text-center">Test Results</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="col-md-6 offset-md-3">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Search by Patient ID, Name or Test Order ID" aria-label="Search" id="search-input">
+                        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-buttons">
+            <button class="btn btn-outline-primary" id="show-all">Show All</button>
+            <button class="btn btn-outline-primary" id="show-completed">Show Completed</button>
+            <button class="btn btn-outline-primary" id="show-pending">Show Pending</button>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-striped" id="test-results-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Test ID</th>
+                        <th scope="col">Patient Name</th>
+                        <th scope="col">Test Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    @foreach (var test in Model)
+                    {
+                        <tr>
+                            <td>@test.Tech_ID</td>
+                            <td>@test.Patient.Full_Name</td>
+                            <td>
+                                @foreach (var n in test.Test_Order_Tests)
+                                {
+                                    if (n.Order_ID == test.Order_ID)
+                                    {
+                                        <span>@n.Test.Test_Name, </span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                <span class="@((test.Status == "Completed") ? "status-completed" : (test.Status == "Pending") ? "status-pending" : "")">
+                                    @test.Status
+                                </span>
+                            </td>
+                            <td><a href="@Url.Action("TestResultsAdd", "Admin")"><button class="btn btn-primary btn-sm">Add Result</button></a></td>
+                        </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+            <!-- Pagination Controls -->
+            <ul class="pagination" id="pagination-controls"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Pagination variables
+    let currentPage = 1;
+    const rowsPerPage = 5; // Change this number to adjust rows per page
+
+    // Select table body, pagination controls, and filter buttons
+    const tableBody = document.getElementById('table-body');
+    const paginationControls = document.getElementById('pagination-controls');
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+    const showAllButton = document.getElementById('show-all');
+    const showCompletedButton = document.getElementById('show-completed');
+    const showPendingButton = document.getElementById('show-pending');
+
+    // Display table rows for the current page
+    function displayRows(page) {
+        tableBody.innerHTML = ''; // Clear the table body
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        rows.slice(start, end).forEach(row => tableBody.appendChild(row));
+        updatePaginationControls();
+    }
+
+    // Update pagination controls
+    function updatePaginationControls() {
+        paginationControls.innerHTML = '';
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.disabled = i === currentPage;
+            button.addEventListener('click', () => {
+                currentPage = i;
+                displayRows(currentPage);
+            });
+            const listItem = document.createElement('li');
+            listItem.appendChild(button);
+            paginationControls.appendChild(listItem);
+        }
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.toLowerCase();
+        const filteredRows = rows.filter(row => {
+            const testId = row.cells[0].textContent.toLowerCase();
+            const patientName = row.cells[1].textContent.toLowerCase();
+            const testName = row.cells[2].textContent.toLowerCase();
+            return testId.includes(query) || patientName.includes(query) || testName.includes(query);
+        });
+        tableBody.innerHTML = ''; // Clear the table body
+        filteredRows.forEach(row => tableBody.appendChild(row));
+        updatePaginationControls();
+    });
+
+    // Filter functionality
+    showAllButton.addEventListener('click', () => {
+        tableBody.innerHTML = ''; // Clear the table
+        rows.forEach(row => tableBody.appendChild(row)); // Show all rows
+        updatePaginationControls();
+    });
+
+    showCompletedButton.addEventListener('click', () => {
+        const filteredRows = rows.filter(row => row.cells[3].textContent.trim().toLowerCase() === 'completed');
+        tableBody.innerHTML = ''; // Clear the table
+        filteredRows.forEach(row => tableBody.appendChild(row)); // Show only completed rows
+        updatePaginationControls();
+    });
+
+    showPendingButton.addEventListener('click', () => {
+        const filteredRows = rows.filter(row => row.cells[3].textContent.trim().toLowerCase() === 'pending');
+        tableBody.innerHTML = ''; // Clear the table
+        filteredRows.forEach(row => tableBody.appendChild(row)); // Show only pending rows
+        updatePaginationControls();
+    });
+
+    // Initialize pagination
+    displayRows(currentPage);
+</script>

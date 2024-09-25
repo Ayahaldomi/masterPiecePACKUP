@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "DoctorReport";
+    Layout = "~/Views/Shared/_LayoutDoctor.cshtml";
+}
+
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-container, .table-container {
+        margin-top: 20px;
+    }
+
+    .custom-width {
+        width: 50% !important;
+    }
+
+
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+</style>
+
+<div class="card">
+    <div class="container">
+        <h1 class="text-center">Test Results</h1>
+        <div class="row ">
+            <div class="col-md-12">
+                <form class="col-md-6 offset-md-3">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Search by Patient ID, Name or Test Order ID" aria-label="Search" id="search-input">
+                        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="table-container">
+            <h2 class="text-center">Test Orders</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Test ID</th>
+                        <th scope="col">Patient Name</th>
+                        <th scope="col">Test Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>001</td>
+                        <td>John Doe</td>
+                        <td>CBC, TSH</td>
+                        <td>Pending</td>
+                        <td><a href="addTestResult.html"><button class="btn btn-primary btn-sm">Add Result</button></a></td>
+                    </tr>
+                    <tr>
+                        <td>002</td>
+                        <td>Jane Smith</td>
+                        <td>urine Analysis</td>
+                        <td>Completed</td>
+                        <td><a href="@Url.Action("DoctorReportAdd", "Admin")" <button class="btn btn-primary btn-sm">Add Result</button></td>
+                    </tr>
+                    <!-- More rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0015c9f9677743048a711eca50b9a747" Name="Diagram1">
+        <EntityTypeShape EntityType="MasterPieceModel.Appointment" Width="1.5" PointX="0.75" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Appointments_Tests" Width="1.5" PointX="3" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.ChatMessage" Width="1.5" PointX="9" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.ChatRoom" Width="1.5" PointX="6.75" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Contact" Width="1.5" PointX="6.75" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Feedback" Width="1.5" PointX="3.75" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Lab_Tech" Width="1.5" PointX="4.5" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Package_Tests" Width="1.5" PointX="3" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Package" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Patient" Width="1.5" PointX="1.5" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Test_Order" Width="1.5" PointX="3.75" PointY="14.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Test_Order_Tests" Width="1.5" PointX="6" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Test" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
+        <AssociationConnector Association="MasterPieceModel.FK__Appointme__Appoi__3E52440B" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Appointme__Test___3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__ChatMessa__ChatR__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__ChatRooms__LabTe__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__ChatRooms__Patie__5812160E" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Feedback__Patien__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Package_T__Packa__440B1D61" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Package_T__Test___44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Test_Orde__Patie__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Test_Orde__Order__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="MasterPieceModel.FK__Test_Orde__Test___4E88ABD4" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

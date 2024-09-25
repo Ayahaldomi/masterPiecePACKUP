@@ -1,0 +1,337 @@
+﻿@model MasterPiece.Models.Test_Order
+@{
+    ViewBag.Title = "AddPatientTests";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    int? age = null;
+
+    if (Model.Patient.Date_Of_Birth.HasValue)
+    {
+        var birthDate = Model.Patient.Date_Of_Birth.Value;
+        var today = DateTime.Today;
+        age = today.Year - birthDate.Year;
+        if (birthDate.Date > today.AddYears(-age.Value)) { age--; }
+    }
+}
+<style>
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+
+    .card.p-4.shadow-md {
+        background-color: #00000012;
+    }
+
+    /* Dropdown container */
+    .dropdown1 {
+        width: 490px;
+        max-width: 100%;
+        margin: 0 auto 20px;
+    }
+
+    /* Style the search box */
+    .search-box {
+        border: 1px solid #DFE5EF;
+        border-radius: 5px;
+        padding: 10px;
+        display: block;
+        width: 100%;
+        font-size: 16px;
+        transition: 0.5s ease;
+    }
+
+    /* The container for the dropdown items */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 100%;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        max-height: 200px;
+        overflow-y: auto; /* Scroll when dropdown exceeds height */
+        border: 1px solid #ddd;
+    }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+            /* Highlight the search result links when hovered */
+            .dropdown-content a:hover {
+                background-color: #f1f1f1;
+            }
+
+    /* Show the dropdown */
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+</style>
+
+<div class="card">
+    <div class="container mt-5">
+        <h2 class="mb-4">Patient Blood Tests</h2>
+        <form id="patientTestsForm" method="post" action="/Admin/SaveTests">
+            <input type="hidden" name="orderId" value="@Model.Order_ID">
+
+            <!-- Add action and method -->
+            <div class="container mt-4">
+                <div class="card p-4 shadow-md">
+                    <div class="row mt-4">
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="patientId" class="fw-bolder">Patient ID:</label>
+                            <p class="ms-2">@Model.Patient.Patient_ID</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="fullName" class="fw-bolder">Full Name:</label>
+                            <p class="ms-2">@Model.Patient.Full_Name</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="age" class="fw-bolder">Age:</label>
+                            <p class="ms-2">
+                                @if (Model.Patient.Date_Of_Birth.HasValue)
+                                {
+                                    <span>@Model.Patient.Date_Of_Birth.Value.ToString("dd/MM/yyyy") (Age: @age)</span>
+                                }
+                                else
+                                {
+                                    <span>Date of Birth: N/A</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="gender" class="fw-bolder">Gender:</label>
+                            <p class="ms-2">@Model.Patient.Gender</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="testOrder" class="fw-bolder">Test Order:</label>
+                            <p class="ms-2">@Model.Order_ID</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+
+
+            <!-- Searchable Dropdown for selecting tests -->
+            <div class="dropdown mb-3">
+                <input type="text" placeholder="Search for tests..." id="searchInput" onkeyup="filterFunction()" class="form-control search-box">
+                <div id="dropdownItems" class="dropdown-content">
+                    @foreach (var test in ViewBag.TestsList)
+                    {
+                        <a href="#" data-price="@test.Price" onclick="addTestToTable('@test.Test_Name', @test.Price, @test.Test_ID)">@test.Test_Name</a>
+                    }
+                </div>
+            </div>
+
+            <!-- Hidden input to hold selected test IDs -->
+            <div id="selectedTestsInputs"></div>
+
+            <h3 class="mt-5">Tests Ordered</h3>
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Test Name</th>
+                        <th>Test Price</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody id="testsTableBody">
+                    <!-- Dynamically added test rows will appear here -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">Total Price</th>
+                        <th colspan="2" id="totalPrice">$0</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <button class="btn btn-outline-danger m-1" type="reset">Cancel</button>
+            <button class="btn btn-outline-primary m-1" type="submit">Save and Proceed to Payment</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let selectedTestsCounter = 0;
+
+    // Function to filter dropdown items
+    function filterFunction() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toUpperCase();
+        let div = document.getElementById("dropdownItems");
+        let a = div.getElementsByTagName("a");
+
+        for (let i = 0; i < a.length; i++) {
+            let txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    }
+
+    // Function to add the selected test and price to the table
+    function addTestToTable(testName, price, testId) {
+        let tableBody = document.getElementById("testsTableBody");
+
+        // Check if the test is already in the table (avoid duplicates)
+        let existingRows = tableBody.getElementsByTagName("tr");
+        for (let i = 0; i < existingRows.length; i++) {
+            let existingTest = existingRows[i].getElementsByTagName("td")[1].textContent;
+            if (existingTest === testName) {
+                alert('This test is already added!');
+                return;
+            }
+        }
+
+        // Create a new row
+        let newRow = document.createElement("tr");
+
+        // Create cells for test name, price, and remove button
+        let testIdCell = document.createElement("td");
+        let testNameCell = document.createElement("td");
+        let priceCell = document.createElement("td");
+        let actionCell = document.createElement("td");
+
+        // Set the cell values
+        testIdCell.textContent = testId;
+        testNameCell.textContent = testName;
+        priceCell.textContent = price + " JOD";
+
+        // Create the remove button
+        let removeBtn = document.createElement("button");
+        removeBtn.classList.add("btn", "btn-danger", "btn-sm");
+        removeBtn.textContent = "Remove";
+        removeBtn.onclick = function () {
+            removeTestFromTable(newRow, testId);
+        };
+        actionCell.appendChild(removeBtn);
+
+        // Append the cells to the new row
+        newRow.appendChild(testIdCell);
+        newRow.appendChild(testNameCell);
+        newRow.appendChild(priceCell);
+        newRow.appendChild(actionCell);
+
+        // Append the new row to the table body
+        tableBody.appendChild(newRow);
+
+        // Add a hidden input for the selected test
+        let selectedTestsDiv = document.getElementById("selectedTestsInputs");
+        let hiddenTestInput = document.createElement("input");
+        hiddenTestInput.type = "hidden";
+        hiddenTestInput.name = `SelectedTests[${selectedTestsCounter}].Test_ID`;
+        hiddenTestInput.value = testId;
+        selectedTestsDiv.appendChild(hiddenTestInput);
+
+        selectedTestsCounter++;
+
+        // Update the total price
+        updateTotalPrice();
+    }
+
+    // Function to update the total price
+    function updateTotalPrice() {
+        let tableBody = document.getElementById("testsTableBody");
+        let totalPriceElement = document.getElementById("totalPrice");
+        let total = 0;
+
+        // Loop through the table rows and sum the prices
+        let rows = tableBody.getElementsByTagName("tr");
+        for (let i = 0; i < rows.length; i++) {
+            let priceText = rows[i].getElementsByTagName("td")[2].textContent;
+            let price = parseFloat(priceText.replace(" JOD", ""));
+            total += price;
+        }
+
+        // Update the total price
+        totalPriceElement.textContent = total + " JOD";
+    }
+
+    //// Function to remove the test from the table
+    //function removeTestFromTable(row, testId) {
+    //    let tableBody = document.getElementById("testsTableBody");
+    //    tableBody.removeChild(row); // Remove the row from the table
+
+    //    // Remove the hidden input for the test
+    //    let selectedTestsDiv = document.getElementById("selectedTestsInputs");
+    //    let hiddenInputs = selectedTestsDiv.getElementsByTagName("input");
+
+    //    // Loop through hidden inputs and remove the one matching testId
+    //    for (let i = 0; i < hiddenInputs.length; i++) {
+    //        if (hiddenInputs[i].value == testId) {
+    //            selectedTestsDiv.removeChild(hiddenInputs[i]);
+    //            break;
+    //        }
+    //    }
+
+    //    // Update the total price after removal
+    //    updateTotalPrice();
+    //}
+
+
+
+    function removeTestFromTable(row, testId) {
+        let tableBody = document.getElementById("testTableBody");
+        tableBody.removeChild(row); // Remove the row from the table
+
+        // Remove the hidden input for the test
+        let selectedTestsDiv = document.getElementById("selectedTestsInputs");
+        let hiddenInputs = selectedTestsDiv.getElementsByTagName("input");
+
+        // Loop through hidden inputs and remove the one matching testId
+        for (let i = 0; i < hiddenInputs.length; i++) {
+            if (hiddenInputs[i].value == testId) {
+                selectedTestsDiv.removeChild(hiddenInputs[i]);
+                break; // Exit loop after removing the matching input
+            }
+        }
+
+        // Reindex the remaining hidden inputs to maintain the correct array structure
+        reindexHiddenInputs();
+
+        // Update the total price after removal
+        updateEditTotalPrice();
+
+        // Debugging: Log the updated state of hidden inputs
+        console.log(selectedTestsDiv.innerHTML);
+    }
+
+    // Function to reindex hidden inputs
+    function reindexHiddenInputs() {
+        let selectedTestsDiv = document.getElementById("selectedTestsInputs");
+        let hiddenInputs = selectedTestsDiv.getElementsByTagName("input");
+
+        // Reindex all hidden inputs after removal
+        for (let i = 0; i < hiddenInputs.length; i++) {
+            hiddenInputs[i].name = `SelectedTests[${i}].Test_ID`; // Ensure correct model binding
+        }
+
+        // Update the counter for adding new tests
+        selectedTestsCounter = hiddenInputs.length;
+    }
+</script>

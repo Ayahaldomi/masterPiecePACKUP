@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewBag.Title = "TestResultsAdd";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    .card {
+        padding: 15px;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-container, .table-container {
+        margin-top: 20px;
+    }
+
+
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+    .card.p-4.shadow-md {
+        background-color: #00000012;
+    }
+
+</style>
+
+<div class="card">
+    <div class="container">
+        <h1 class="text-center">Add Test Result</h1>
+        <div class="form-group row">
+            <div class="container mt-4">
+                <div class="card p-4 shadow-md">
+                    <div class="row mt-4">
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="patientId" class="fw-bolder">Patient ID:</label>
+                            <p class="ms-2">8855</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="fullName" class="fw-bolder">Full Name:</label>
+                            <p class="ms-2">Ayah Hasan</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="age" class="fw-bolder">Age:</label>
+                            <p class="ms-2">28</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="gender" class="fw-bolder">Gender:</label>
+                            <p class="ms-2">Female</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="testOrder" class="fw-bolder">Test Order:</label>
+                            <p class="ms-2">5518</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Test Name</th>
+                            <th scope="col">Result</th>
+                            <th scope="col">Normal Range</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CBC</td>
+                            <td><input type="text" class="form-control" placeholder="Enter result"></td>
+                            <td>4.5-11 x10^9/L</td>
+                        </tr>
+                        <tr>
+                            <td>TSH</td>
+                            <td><input type="text" class="form-control" placeholder="Enter result"></td>
+                            <td>0.4-4.0 mU/L</td>
+                        </tr>
+                        <!-- More rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-4">
+                <button id="save-button" class="btn btn-primary">Save</button>
+                <button id="print-button" class="btn btn-secondary" disabled>Print</button>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    document.getElementById('save-button').addEventListener('click', function() {
+      // Add save functionality here
+      document.getElementById('print-button').disabled = false;
+    });
+</script>

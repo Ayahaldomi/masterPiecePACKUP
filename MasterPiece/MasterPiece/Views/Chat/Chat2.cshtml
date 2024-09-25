@@ -1,0 +1,207 @@
+﻿@model MasterPiece.ViewModel.PatientAndChat
+
+@{
+    ViewBag.Title = "Chat Room";
+    ViewBag.SenderType = "Patient";
+}
+
+
+<style>
+    body {
+        background-color: #eee;
+    }
+
+    .card {
+        margin: auto;
+    }
+
+    html, body, .intro {
+        height: 100%;
+    }
+
+    table td, table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .mask-custom {
+        background: rgba(24, 24, 16, .2);
+        border-radius: 2em;
+        backdrop-filter: blur(25px);
+        border: 2px solid rgba(255, 255, 255, 0.05);
+        background-clip: padding-box;
+        box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+    }
+
+    .card.mb-4 {
+        height: 100%;
+        padding: 15px;
+    }
+
+    .mb-4 {
+        margin-bottom: 0rem !important;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100% !important;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+
+<link rel="stylesheet" href="~/myContent/css/styles1.css">
+
+<section>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">User</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Doctor Chat</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <img src="~/myContent/img/blank-profile-picture-973460_960_720.jpg" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                        <h5 class="my-3">@Model.Patient.Full_Name</h5>
+                        <p class="text-muted mb-1">@Model.Patient.Gender</p>
+                        <div class="d-flex justify-content-center mb-2">
+                            <a href="@Url.Action("Profile", "User", new {id = Model.Patient.Patient_ID})"> <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">Go Back To Profile</button> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="container">
+                        <div class="container py-5">
+
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="card" id="chat3" style="border-radius: 15px;">
+                                        <div class="card-body">
+
+                                            <div class="row">
+
+
+                                                <div class="col-md-6 col-lg-7 col-xl-8 w-100">
+
+                                                    <div id="chatMessages" class="pt-3 pe-3" style="position: relative; height: 400px; overflow-y: auto;">
+
+                                                        @Html.Partial("_PatientChat", Model.Messages)
+
+                                                    </div>
+                                                    @if (Model.Messages.Count(m => m.SenderId == ViewBag.PatientId && m.SenderType == "Patient") < 2 || ViewBag.PaymentStatus == "Paid")
+                                                    {
+                                                        <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+                                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                                                                 alt="avatar 3" style="width: 40px; height: 100%;">
+                                                            @using (Html.BeginForm("SendMessage2", "Chat", FormMethod.Post))
+                                                            {
+                                                                @Html.Hidden("chatRoomId", (int)ViewBag.ChatRoomId)
+                                                                @Html.Hidden("senderId", (int)ViewBag.PatientId)
+                                                                @Html.Hidden("senderType", "Patient")
+
+                                                                @*<textarea id="messageInput" name="messageText" rows="3" class="form-control form-control-lg"></textarea>*@
+                                                                <input type="text" class="form-control form-control-lg" id="messageInput"
+                                                                       placeholder="Type message" name="messageText">
+                                                                <button type="submit" class="btn btn-primary mt-2">Send</button>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>You have sent two messages. Please pay to continue chatting.</p>
+                                                        <!-- Modal Trigger Button -->
+                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                                                            Pay with PayPal
+                                                        </button>
+                                                    }
+                                                    @*<input type="text" class="form-control form-control-lg" id="exampleFormControlInput2"
+                                                               placeholder="Type message">
+                                                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                                                        <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+                                                        <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>*@
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Confirmation Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Confirm Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>The cost for continuing the chat is $50.00. Do you wish to proceed?</p>
+                <p>Please confirm your payment to continue chatting.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+                <!-- Actual Form Submission Button -->
+                @using (Html.BeginForm("ProcessPayment", "Chat", FormMethod.Post, new { @id = "paymentForm" }))
+                {
+                    @Html.Hidden("patientId", (int)ViewBag.PatientId)
+                    <button type="submit" class="btn btn-primary">Confirm and Pay</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+
+            // Poll for new messages every 5 seconds
+            setInterval(function () {
+                var chatRoomId = '@ViewBag.ChatRoomId';
+                if (chatRoomId) {
+                    $.get('@Url.Action("GetChatMessages", "Chat")', { chatRoomId: chatRoomId }, function (data) {
+                        $('#chatMessages').html(data);
+                        $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+                    });
+                }
+            }, 5000); // 5000 milliseconds = 5 seconds
+
+            // Scroll to the bottom of the chat messages div on page load
+            $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+        });
+    </script>
+}
+
+
+
+

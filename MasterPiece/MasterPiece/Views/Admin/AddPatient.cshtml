@@ -1,0 +1,207 @@
+﻿@model IEnumerable<MasterPiece.Models.Patient>
+@{
+    ViewBag.Title = "AddPatient";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<link rel="stylesheet" href="~/myContent/assets/css/styles1.css">
+<style>
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+   
+    .user-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: none; /* Hide the list initially */
+        max-height: 200px;
+        overflow-y: auto; /* Add scroll if list becomes too long */
+        border: 1px solid #ccc;
+    }
+
+    .user-list li {
+        padding: 10px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .user-list li:hover {
+            background-color: #ececec;
+        }
+
+    .search-box {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+</style>
+
+   
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="container">
+                <h2>Patient Record Form</h2>
+                <form id="patient-form" action="/Admin/AddPatient" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Patient_ID">Patient ID</label>
+                            <input type="text" id="Patient_ID" name="Patient_ID" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Full_Name">Full Name</label>
+                            @*<input type="text" id="Full_Name" name="Full_Name" required>*@
+                            <input type="text" placeholder="Search Users.." id="userSearchInput" onkeyup="filterUsers()" class="search-box" name="Full_Name" required>
+                            <ul id="userList" class="user-list">
+                                @foreach (var user in Model)
+                                {
+                                    <li data-user-id="@user.Patient_ID"
+                                        data-full-name="@user.Full_Name"
+                                        data-date-of-birth="@user.Date_Of_Birth"
+                                        data-gender="@user.Gender"
+                                        data-marital-status="@user.Marital_Status"
+                                        data-nationality="@user.Nationality"
+                                        data-phone-number="@user.Phone_Number"
+                                        data-home-address="@user.Home_Address"
+                                        data-note="@user.Note"
+                                        onclick="selectUser(this)">
+                                        @user.Full_Name
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <label for="Date_Of_Birth">Date of Birth</label>
+                            <input type="date" id="Date_Of_Birth" name="Date_Of_Birth" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Gender">Gender</label>
+                            <select id="Gender" name="Gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="Marital_Status">Marital Status</label>
+                            <select id="Marital_Status" name="Marital_Status" required>
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Divorced">Divorced</option>
+                                <option value="Widowed">Widowed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Nationality">Nationality</label>
+                            <input type="text" id="Nationality" name="Nationality">
+                        </div>
+                        <div class="form-group">
+                            <label for="Phone_Number">Phone Number</label>
+                            <input type="tel" id="Phone_Number" name="Phone_Number" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Home_Address">Home Address</label>
+                            <!-- <textarea id="home-address" name="home-address" rows="4" required></textarea> -->
+                            <input type="text" id="Home_Address" name="Home_Address" required>
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Note">Note</label>
+                            <textarea id="Note" name="Note" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="button" class="btn btn-outline-danger m-1" id="cancel-button">Cancel</button>
+                        @*<button type="button" class="btn btn-outline-secondary m-1">Save</button>*@
+                          <button type="submit" class="btn btn-outline-primary m-1" id="save-button">Save and Add Tests</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to filter the user list based on input
+    function filterUsers() {
+        let input = document.getElementById("userSearchInput");
+        let filter = input.value.toUpperCase();
+        let ul = document.getElementById("userList");
+        let li = ul.getElementsByTagName("li");
+
+        // If input is not empty, display the list
+        if (filter.trim() !== "") {
+            ul.style.display = "block";
+        } else {
+            ul.style.display = "none"; // Hide the list if input is empty
+        }
+
+        for (let i = 0; i < li.length; i++) {
+            let txtValue = li[i].textContent || li[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = ""; // Show matching item
+            } else {
+                li[i].style.display = "none"; // Hide non-matching item
+            }
+        }
+    }
+
+    // Function to handle user selection and fill the form
+    function selectUser(element) {
+        // Get the data from the selected list item
+        let userId = element.getAttribute("data-user-id");
+        let fullName = element.getAttribute("data-full-name");
+        let dateOfBirth = element.getAttribute("data-date-of-birth");
+        let gender = element.getAttribute("data-gender");
+        let maritalStatus = element.getAttribute("data-marital-status");
+        let nationality = element.getAttribute("data-nationality");
+        let phoneNumber = element.getAttribute("data-phone-number");
+        let homeAddress = element.getAttribute("data-home-address");
+        let note = element.getAttribute("data-note");
+
+        // Convert the date to yyyy-MM-dd format if it exists
+        let formattedDateOfBirth = '';
+        if (dateOfBirth) {
+            let date = new Date(dateOfBirth);
+            formattedDateOfBirth = date.toISOString().split('T')[0]; // Get only the date in yyyy-MM-dd format
+        }
+
+        // Populate the form fields with the selected user details
+        document.getElementById("Patient_ID").value = userId;
+        document.getElementById("userSearchInput").value = fullName;
+        document.getElementById("Date_Of_Birth").value = formattedDateOfBirth;
+        document.getElementById("Gender").value = gender;
+        document.getElementById("Marital_Status").value = maritalStatus;
+        document.getElementById("Nationality").value = nationality;
+        document.getElementById("Phone_Number").value = phoneNumber;
+        document.getElementById("Home_Address").value = homeAddress;
+        document.getElementById("Note").value = note;
+
+        // Hide the user list after selection
+        document.getElementById("userList").style.display = "none";
+        // Optionally, update the search input to the selected user's name
+        document.getElementById("userSearchInput").value = fullName;
+    }
+
+</script>

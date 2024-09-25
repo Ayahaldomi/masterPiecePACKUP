@@ -1,0 +1,948 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MasterPieceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Appointments">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Full_Name" Type="nvarchar(max)" />
+          <Property Name="Gender" Type="nvarchar(max)" />
+          <Property Name="Date_Of_Birth" Type="date" />
+          <Property Name="Email_Address" Type="nvarchar(max)" />
+          <Property Name="Phone_Number" Type="nvarchar(max)" />
+          <Property Name="Home_Address" Type="nvarchar(max)" />
+          <Property Name="Date_Of_Appo" Type="datetime" />
+          <Property Name="Total_price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Amount_paid" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Billing_ID" Type="int" />
+          <Property Name="Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Appointments_Tests">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Appointment_ID" Type="bigint" />
+          <Property Name="Test_ID" Type="int" />
+        </EntityType>
+        <EntityType Name="ChatMessages">
+          <Key>
+            <PropertyRef Name="ChatMessage_ID" />
+          </Key>
+          <Property Name="ChatMessage_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChatRoom_ID" Type="int" />
+          <Property Name="SenderId" Type="int" />
+          <Property Name="MessageText" Type="nvarchar(max)" />
+          <Property Name="SentAt" Type="datetime" />
+          <Property Name="SenderType" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="ChatRooms">
+          <Key>
+            <PropertyRef Name="ChatRoom_ID" />
+          </Key>
+          <Property Name="ChatRoom_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LabTech_ID" Type="int" />
+          <Property Name="Patient_ID" Type="int" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="hasUnreadMessages" Type="bit" />
+        </EntityType>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="contact_id" />
+          </Key>
+          <Property Name="contact_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar(max)" />
+          <Property Name="email" Type="nvarchar(max)" />
+          <Property Name="sub" Type="nvarchar(max)" />
+          <Property Name="message" Type="nvarchar(max)" />
+          <Property Name="sent_date" Type="date" />
+          <Property Name="admin_response" Type="nvarchar(max)" />
+          <Property Name="response_date" Type="date" />
+          <Property Name="status" Type="int" />
+        </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="Feedback_ID" />
+          </Key>
+          <Property Name="Feedback_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Patient_ID" Type="int" />
+          <Property Name="Message" Type="nvarchar(max)" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Lab_Tech">
+          <Key>
+            <PropertyRef Name="Tech_ID" />
+          </Key>
+          <Property Name="Tech_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Package_Tests">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Package_ID" Type="int" />
+          <Property Name="Test_ID" Type="int" />
+        </EntityType>
+        <EntityType Name="Packages">
+          <Key>
+            <PropertyRef Name="Package_ID" />
+          </Key>
+          <Property Name="Package_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Package_Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Picture" Type="nvarchar(max)" />
+          <Property Name="Old_price" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Patients">
+          <Key>
+            <PropertyRef Name="Patient_ID" />
+          </Key>
+          <Property Name="Patient_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Full_Name" Type="nvarchar(max)" />
+          <Property Name="Date_Of_Birth" Type="date" />
+          <Property Name="Gender" Type="nvarchar(max)" />
+          <Property Name="Marital_Status" Type="nvarchar(max)" />
+          <Property Name="Nationality" Type="nvarchar(max)" />
+          <Property Name="Phone_Number" Type="int" />
+          <Property Name="Home_Address" Type="nvarchar(max)" />
+          <Property Name="Note" Type="nvarchar(max)" />
+          <Property Name="PaymentStatus" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Test_Order">
+          <Key>
+            <PropertyRef Name="Order_ID" />
+          </Key>
+          <Property Name="Order_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Patient_ID" Type="int" />
+          <Property Name="Date" Type="date" />
+          <Property Name="Tech_ID" Type="int" />
+          <Property Name="Total_Price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Discount_Persent" Type="int" />
+          <Property Name="Amount_Paid" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Test_Order_Tests">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Order_ID" Type="int" />
+          <Property Name="Test_ID" Type="int" />
+          <Property Name="Result" Type="nvarchar(max)" />
+          <Property Name="Date_Of_Result" Type="date" />
+          <Property Name="Comment" Type="nvarchar(max)" />
+          <Property Name="Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Tests">
+          <Key>
+            <PropertyRef Name="Test_ID" />
+          </Key>
+          <Property Name="Test_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Test_Name" Type="nvarchar(max)" />
+          <Property Name="Alternative_Name" Type="nvarchar(max)" />
+          <Property Name="Components" Type="nvarchar(max)" />
+          <Property Name="Normal_Range" Type="nvarchar(max)" />
+          <Property Name="Unit" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Price" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Inventory" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Sample_Type" Type="nvarchar(max)" />
+          <Property Name="Expiration_Date" Type="date" />
+        </EntityType>
+        <Association Name="FK__Appointme__Appoi__72C60C4A">
+          <End Role="Appointments" Type="Self.Appointments" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Appointments_Tests" Type="Self.Appointments_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Appointments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Appointments_Tests">
+              <PropertyRef Name="Appointment_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Appointme__Test___73BA3083">
+          <End Role="Tests" Type="Self.Tests" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Appointments_Tests" Type="Self.Appointments_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tests">
+              <PropertyRef Name="Test_ID" />
+            </Principal>
+            <Dependent Role="Appointments_Tests">
+              <PropertyRef Name="Test_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChatMessa__ChatR__5BE2A6F2">
+          <End Role="ChatRooms" Type="Self.ChatRooms" Multiplicity="0..1" />
+          <End Role="ChatMessages" Type="Self.ChatMessages" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatRooms">
+              <PropertyRef Name="ChatRoom_ID" />
+            </Principal>
+            <Dependent Role="ChatMessages">
+              <PropertyRef Name="ChatRoom_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChatRooms__LabTe__571DF1D5">
+          <End Role="Lab_Tech" Type="Self.Lab_Tech" Multiplicity="0..1" />
+          <End Role="ChatRooms" Type="Self.ChatRooms" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lab_Tech">
+              <PropertyRef Name="Tech_ID" />
+            </Principal>
+            <Dependent Role="ChatRooms">
+              <PropertyRef Name="LabTech_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChatRooms__Patie__5812160E">
+          <End Role="Patients" Type="Self.Patients" Multiplicity="0..1" />
+          <End Role="ChatRooms" Type="Self.ChatRooms" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patients">
+              <PropertyRef Name="Patient_ID" />
+            </Principal>
+            <Dependent Role="ChatRooms">
+              <PropertyRef Name="Patient_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Feedback__Patien__5441852A">
+          <End Role="Patients" Type="Self.Patients" Multiplicity="0..1" />
+          <End Role="Feedback" Type="Self.Feedback" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patients">
+              <PropertyRef Name="Patient_ID" />
+            </Principal>
+            <Dependent Role="Feedback">
+              <PropertyRef Name="Patient_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Package_T__Packa__440B1D61">
+          <End Role="Packages" Type="Self.Packages" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Package_Tests" Type="Self.Package_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packages">
+              <PropertyRef Name="Package_ID" />
+            </Principal>
+            <Dependent Role="Package_Tests">
+              <PropertyRef Name="Package_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Package_T__Test___44FF419A">
+          <End Role="Tests" Type="Self.Tests" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Package_Tests" Type="Self.Package_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tests">
+              <PropertyRef Name="Test_ID" />
+            </Principal>
+            <Dependent Role="Package_Tests">
+              <PropertyRef Name="Test_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Test_Orde__Order__4D94879B">
+          <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Test_Order_Tests" Type="Self.Test_Order_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Test_Order">
+              <PropertyRef Name="Order_ID" />
+            </Principal>
+            <Dependent Role="Test_Order_Tests">
+              <PropertyRef Name="Order_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Test_Orde__Patie__4AB81AF0">
+          <End Role="Patients" Type="Self.Patients" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patients">
+              <PropertyRef Name="Patient_ID" />
+            </Principal>
+            <Dependent Role="Test_Order">
+              <PropertyRef Name="Patient_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Test_Orde__Test___4E88ABD4">
+          <End Role="Tests" Type="Self.Tests" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Test_Order_Tests" Type="Self.Test_Order_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tests">
+              <PropertyRef Name="Test_ID" />
+            </Principal>
+            <Dependent Role="Test_Order_Tests">
+              <PropertyRef Name="Test_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MasterPieceModelStoreContainer">
+          <EntitySet Name="Appointments" EntityType="Self.Appointments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Appointments_Tests" EntityType="Self.Appointments_Tests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChatMessages" EntityType="Self.ChatMessages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChatRooms" EntityType="Self.ChatRooms" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Lab_Tech" EntityType="Self.Lab_Tech" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Package_Tests" EntityType="Self.Package_Tests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Packages" EntityType="Self.Packages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Patients" EntityType="Self.Patients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Test_Order" EntityType="Self.Test_Order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Test_Order_Tests" EntityType="Self.Test_Order_Tests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tests" EntityType="Self.Tests" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Appointme__Appoi__72C60C4A" Association="Self.FK__Appointme__Appoi__72C60C4A">
+            <End Role="Appointments" EntitySet="Appointments" />
+            <End Role="Appointments_Tests" EntitySet="Appointments_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Appointme__Test___73BA3083" Association="Self.FK__Appointme__Test___73BA3083">
+            <End Role="Tests" EntitySet="Tests" />
+            <End Role="Appointments_Tests" EntitySet="Appointments_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChatMessa__ChatR__5BE2A6F2" Association="Self.FK__ChatMessa__ChatR__5BE2A6F2">
+            <End Role="ChatRooms" EntitySet="ChatRooms" />
+            <End Role="ChatMessages" EntitySet="ChatMessages" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChatRooms__LabTe__571DF1D5" Association="Self.FK__ChatRooms__LabTe__571DF1D5">
+            <End Role="Lab_Tech" EntitySet="Lab_Tech" />
+            <End Role="ChatRooms" EntitySet="ChatRooms" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChatRooms__Patie__5812160E" Association="Self.FK__ChatRooms__Patie__5812160E">
+            <End Role="Patients" EntitySet="Patients" />
+            <End Role="ChatRooms" EntitySet="ChatRooms" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Feedback__Patien__5441852A" Association="Self.FK__Feedback__Patien__5441852A">
+            <End Role="Patients" EntitySet="Patients" />
+            <End Role="Feedback" EntitySet="Feedback" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Package_T__Packa__440B1D61" Association="Self.FK__Package_T__Packa__440B1D61">
+            <End Role="Packages" EntitySet="Packages" />
+            <End Role="Package_Tests" EntitySet="Package_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Package_T__Test___44FF419A" Association="Self.FK__Package_T__Test___44FF419A">
+            <End Role="Tests" EntitySet="Tests" />
+            <End Role="Package_Tests" EntitySet="Package_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Test_Orde__Order__4D94879B" Association="Self.FK__Test_Orde__Order__4D94879B">
+            <End Role="Test_Order" EntitySet="Test_Order" />
+            <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Test_Orde__Patie__4AB81AF0" Association="Self.FK__Test_Orde__Patie__4AB81AF0">
+            <End Role="Patients" EntitySet="Patients" />
+            <End Role="Test_Order" EntitySet="Test_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Test_Orde__Test___4E88ABD4" Association="Self.FK__Test_Orde__Test___4E88ABD4">
+            <End Role="Tests" EntitySet="Tests" />
+            <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MasterPieceModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Appointment">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="Full_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Gender" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Of_Birth" Type="DateTime" Precision="0" />
+          <Property Name="Email_Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Phone_Number" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Home_Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Of_Appo" Type="DateTime" Precision="3" />
+          <Property Name="Total_price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Amount_paid" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Billing_ID" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Appointments_Tests" Relationship="Self.FK__Appointme__Appoi__3E52440B" FromRole="Appointments" ToRole="Appointments_Tests" />
+        </EntityType>
+        <EntityType Name="Appointments_Tests">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Appointment_ID" Type="Int64" />
+          <Property Name="Test_ID" Type="Int32" />
+          <NavigationProperty Name="Appointment" Relationship="Self.FK__Appointme__Appoi__3E52440B" FromRole="Appointments_Tests" ToRole="Appointments" />
+          <NavigationProperty Name="Test" Relationship="Self.FK__Appointme__Test___3F466844" FromRole="Appointments_Tests" ToRole="Tests" />
+        </EntityType>
+        <EntityType Name="ChatMessage">
+          <Key>
+            <PropertyRef Name="ChatMessage_ID" />
+          </Key>
+          <Property Name="ChatMessage_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChatRoom_ID" Type="Int32" />
+          <Property Name="SenderId" Type="Int32" />
+          <Property Name="MessageText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SentAt" Type="DateTime" Precision="3" />
+          <Property Name="SenderType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ChatRoom" Relationship="Self.FK__ChatMessa__ChatR__5BE2A6F2" FromRole="ChatMessages" ToRole="ChatRooms" />
+        </EntityType>
+        <EntityType Name="ChatRoom">
+          <Key>
+            <PropertyRef Name="ChatRoom_ID" />
+          </Key>
+          <Property Name="ChatRoom_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LabTech_ID" Type="Int32" />
+          <Property Name="Patient_ID" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChatMessages" Relationship="Self.FK__ChatMessa__ChatR__5BE2A6F2" FromRole="ChatRooms" ToRole="ChatMessages" />
+          <NavigationProperty Name="Lab_Tech" Relationship="Self.FK__ChatRooms__LabTe__571DF1D5" FromRole="ChatRooms" ToRole="Lab_Tech" />
+          <NavigationProperty Name="Patient" Relationship="Self.FK__ChatRooms__Patie__5812160E" FromRole="ChatRooms" ToRole="Patients" />
+          <Property Name="hasUnreadMessages" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="contact_id" />
+          </Key>
+          <Property Name="contact_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="sub" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="sent_date" Type="DateTime" Precision="0" />
+          <Property Name="admin_response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="response_date" Type="DateTime" Precision="0" />
+          <Property Name="status" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="Feedback_ID" />
+          </Key>
+          <Property Name="Feedback_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Patient_ID" Type="Int32" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Patient" Relationship="Self.FK__Feedback__Patien__5441852A" FromRole="Feedback" ToRole="Patients" />
+        </EntityType>
+        <EntityType Name="Lab_Tech">
+          <Key>
+            <PropertyRef Name="Tech_ID" />
+          </Key>
+          <Property Name="Tech_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ChatRooms" Relationship="Self.FK__ChatRooms__LabTe__571DF1D5" FromRole="Lab_Tech" ToRole="ChatRooms" />
+        </EntityType>
+        <EntityType Name="Package_Tests">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Package_ID" Type="Int32" />
+          <Property Name="Test_ID" Type="Int32" />
+          <NavigationProperty Name="Package" Relationship="Self.FK__Package_T__Packa__440B1D61" FromRole="Package_Tests" ToRole="Packages" />
+          <NavigationProperty Name="Test" Relationship="Self.FK__Package_T__Test___44FF419A" FromRole="Package_Tests" ToRole="Tests" />
+        </EntityType>
+        <EntityType Name="Package">
+          <Key>
+            <PropertyRef Name="Package_ID" />
+          </Key>
+          <Property Name="Package_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Package_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Picture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Package_Tests" Relationship="Self.FK__Package_T__Packa__440B1D61" FromRole="Packages" ToRole="Package_Tests" />
+          <Property Name="Old_price" Type="Decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Patient">
+          <Key>
+            <PropertyRef Name="Patient_ID" />
+          </Key>
+          <Property Name="Patient_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Full_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Of_Birth" Type="DateTime" Precision="0" />
+          <Property Name="Gender" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Marital_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Nationality" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Phone_Number" Type="Int32" />
+          <Property Name="Home_Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ChatRooms" Relationship="Self.FK__ChatRooms__Patie__5812160E" FromRole="Patients" ToRole="ChatRooms" />
+          <NavigationProperty Name="Feedbacks" Relationship="Self.FK__Feedback__Patien__5441852A" FromRole="Patients" ToRole="Feedback" />
+          <NavigationProperty Name="Test_Order" Relationship="Self.FK__Test_Orde__Patie__4AB81AF0" FromRole="Patients" ToRole="Test_Order" />
+        </EntityType>
+        <EntityType Name="Test_Order">
+          <Key>
+            <PropertyRef Name="Order_ID" />
+          </Key>
+          <Property Name="Order_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Patient_ID" Type="Int32" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="Tech_ID" Type="Int32" />
+          <Property Name="Total_Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Discount_Persent" Type="Int32" />
+          <Property Name="Amount_Paid" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Patient" Relationship="Self.FK__Test_Orde__Patie__4AB81AF0" FromRole="Test_Order" ToRole="Patients" />
+          <NavigationProperty Name="Test_Order_Tests" Relationship="Self.FK__Test_Orde__Order__4D94879B" FromRole="Test_Order" ToRole="Test_Order_Tests" />
+        </EntityType>
+        <EntityType Name="Test_Order_Tests">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Order_ID" Type="Int32" />
+          <Property Name="Test_ID" Type="Int32" />
+          <Property Name="Result" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Of_Result" Type="DateTime" Precision="0" />
+          <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Test_Order" Relationship="Self.FK__Test_Orde__Order__4D94879B" FromRole="Test_Order_Tests" ToRole="Test_Order" />
+          <NavigationProperty Name="Test" Relationship="Self.FK__Test_Orde__Test___4E88ABD4" FromRole="Test_Order_Tests" ToRole="Tests" />
+        </EntityType>
+        <EntityType Name="Test">
+          <Key>
+            <PropertyRef Name="Test_ID" />
+          </Key>
+          <Property Name="Test_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Test_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Alternative_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Components" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Normal_Range" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Unit" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Inventory" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Sample_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Expiration_Date" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Appointments_Tests" Relationship="Self.FK__Appointme__Test___3F466844" FromRole="Tests" ToRole="Appointments_Tests" />
+          <NavigationProperty Name="Package_Tests" Relationship="Self.FK__Package_T__Test___44FF419A" FromRole="Tests" ToRole="Package_Tests" />
+          <NavigationProperty Name="Test_Order_Tests" Relationship="Self.FK__Test_Orde__Test___4E88ABD4" FromRole="Tests" ToRole="Test_Order_Tests" />
+        </EntityType>
+        <Association Name="FK__Appointme__Appoi__3E52440B">
+          <End Role="Appointments" Type="Self.Appointment" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Appointments_Tests" Type="Self.Appointments_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Appointments">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Appointments_Tests">
+              <PropertyRef Name="Appointment_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Appointme__Test___3F466844">
+          <End Role="Tests" Type="Self.Test" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Appointments_Tests" Type="Self.Appointments_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tests">
+              <PropertyRef Name="Test_ID" />
+            </Principal>
+            <Dependent Role="Appointments_Tests">
+              <PropertyRef Name="Test_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChatMessa__ChatR__5BE2A6F2">
+          <End Role="ChatRooms" Type="Self.ChatRoom" Multiplicity="0..1" />
+          <End Role="ChatMessages" Type="Self.ChatMessage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatRooms">
+              <PropertyRef Name="ChatRoom_ID" />
+            </Principal>
+            <Dependent Role="ChatMessages">
+              <PropertyRef Name="ChatRoom_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChatRooms__LabTe__571DF1D5">
+          <End Role="Lab_Tech" Type="Self.Lab_Tech" Multiplicity="0..1" />
+          <End Role="ChatRooms" Type="Self.ChatRoom" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lab_Tech">
+              <PropertyRef Name="Tech_ID" />
+            </Principal>
+            <Dependent Role="ChatRooms">
+              <PropertyRef Name="LabTech_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChatRooms__Patie__5812160E">
+          <End Role="Patients" Type="Self.Patient" Multiplicity="0..1" />
+          <End Role="ChatRooms" Type="Self.ChatRoom" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patients">
+              <PropertyRef Name="Patient_ID" />
+            </Principal>
+            <Dependent Role="ChatRooms">
+              <PropertyRef Name="Patient_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Feedback__Patien__5441852A">
+          <End Role="Patients" Type="Self.Patient" Multiplicity="0..1" />
+          <End Role="Feedback" Type="Self.Feedback" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patients">
+              <PropertyRef Name="Patient_ID" />
+            </Principal>
+            <Dependent Role="Feedback">
+              <PropertyRef Name="Patient_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Package_T__Packa__440B1D61">
+          <End Role="Packages" Type="Self.Package" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Package_Tests" Type="Self.Package_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Packages">
+              <PropertyRef Name="Package_ID" />
+            </Principal>
+            <Dependent Role="Package_Tests">
+              <PropertyRef Name="Package_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Package_T__Test___44FF419A">
+          <End Role="Tests" Type="Self.Test" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Package_Tests" Type="Self.Package_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tests">
+              <PropertyRef Name="Test_ID" />
+            </Principal>
+            <Dependent Role="Package_Tests">
+              <PropertyRef Name="Test_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Test_Orde__Patie__4AB81AF0">
+          <End Role="Patients" Type="Self.Patient" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patients">
+              <PropertyRef Name="Patient_ID" />
+            </Principal>
+            <Dependent Role="Test_Order">
+              <PropertyRef Name="Patient_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Test_Orde__Order__4D94879B">
+          <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Test_Order_Tests" Type="Self.Test_Order_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Test_Order">
+              <PropertyRef Name="Order_ID" />
+            </Principal>
+            <Dependent Role="Test_Order_Tests">
+              <PropertyRef Name="Order_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Test_Orde__Test___4E88ABD4">
+          <End Role="Tests" Type="Self.Test" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Test_Order_Tests" Type="Self.Test_Order_Tests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tests">
+              <PropertyRef Name="Test_ID" />
+            </Principal>
+            <Dependent Role="Test_Order_Tests">
+              <PropertyRef Name="Test_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MasterPieceEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Appointments" EntityType="Self.Appointment" />
+          <EntitySet Name="Appointments_Tests" EntityType="Self.Appointments_Tests" />
+          <EntitySet Name="ChatMessages" EntityType="Self.ChatMessage" />
+          <EntitySet Name="ChatRooms" EntityType="Self.ChatRoom" />
+          <EntitySet Name="Contacts" EntityType="Self.Contact" />
+          <EntitySet Name="Feedbacks" EntityType="Self.Feedback" />
+          <EntitySet Name="Lab_Tech" EntityType="Self.Lab_Tech" />
+          <EntitySet Name="Package_Tests" EntityType="Self.Package_Tests" />
+          <EntitySet Name="Packages" EntityType="Self.Package" />
+          <EntitySet Name="Patients" EntityType="Self.Patient" />
+          <EntitySet Name="Test_Order" EntityType="Self.Test_Order" />
+          <EntitySet Name="Test_Order_Tests" EntityType="Self.Test_Order_Tests" />
+          <EntitySet Name="Tests" EntityType="Self.Test" />
+          <AssociationSet Name="FK__Appointme__Appoi__3E52440B" Association="Self.FK__Appointme__Appoi__3E52440B">
+            <End Role="Appointments" EntitySet="Appointments" />
+            <End Role="Appointments_Tests" EntitySet="Appointments_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Appointme__Test___3F466844" Association="Self.FK__Appointme__Test___3F466844">
+            <End Role="Tests" EntitySet="Tests" />
+            <End Role="Appointments_Tests" EntitySet="Appointments_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChatMessa__ChatR__5BE2A6F2" Association="Self.FK__ChatMessa__ChatR__5BE2A6F2">
+            <End Role="ChatRooms" EntitySet="ChatRooms" />
+            <End Role="ChatMessages" EntitySet="ChatMessages" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChatRooms__LabTe__571DF1D5" Association="Self.FK__ChatRooms__LabTe__571DF1D5">
+            <End Role="Lab_Tech" EntitySet="Lab_Tech" />
+            <End Role="ChatRooms" EntitySet="ChatRooms" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChatRooms__Patie__5812160E" Association="Self.FK__ChatRooms__Patie__5812160E">
+            <End Role="Patients" EntitySet="Patients" />
+            <End Role="ChatRooms" EntitySet="ChatRooms" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Feedback__Patien__5441852A" Association="Self.FK__Feedback__Patien__5441852A">
+            <End Role="Patients" EntitySet="Patients" />
+            <End Role="Feedback" EntitySet="Feedbacks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Package_T__Packa__440B1D61" Association="Self.FK__Package_T__Packa__440B1D61">
+            <End Role="Packages" EntitySet="Packages" />
+            <End Role="Package_Tests" EntitySet="Package_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Package_T__Test___44FF419A" Association="Self.FK__Package_T__Test___44FF419A">
+            <End Role="Tests" EntitySet="Tests" />
+            <End Role="Package_Tests" EntitySet="Package_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Test_Orde__Patie__4AB81AF0" Association="Self.FK__Test_Orde__Patie__4AB81AF0">
+            <End Role="Patients" EntitySet="Patients" />
+            <End Role="Test_Order" EntitySet="Test_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Test_Orde__Order__4D94879B" Association="Self.FK__Test_Orde__Order__4D94879B">
+            <End Role="Test_Order" EntitySet="Test_Order" />
+            <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Test_Orde__Test___4E88ABD4" Association="Self.FK__Test_Orde__Test___4E88ABD4">
+            <End Role="Tests" EntitySet="Tests" />
+            <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MasterPieceModelStoreContainer" CdmEntityContainer="MasterPieceEntities">
+          <EntitySetMapping Name="Appointments">
+            <EntityTypeMapping TypeName="MasterPieceModel.Appointment">
+              <MappingFragment StoreEntitySet="Appointments">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Date_Of_Birth" ColumnName="Date_Of_Birth" />
+                <ScalarProperty Name="Email_Address" ColumnName="Email_Address" />
+                <ScalarProperty Name="Phone_Number" ColumnName="Phone_Number" />
+                <ScalarProperty Name="Home_Address" ColumnName="Home_Address" />
+                <ScalarProperty Name="Date_Of_Appo" ColumnName="Date_Of_Appo" />
+                <ScalarProperty Name="Total_price" ColumnName="Total_price" />
+                <ScalarProperty Name="Amount_paid" ColumnName="Amount_paid" />
+                <ScalarProperty Name="Billing_ID" ColumnName="Billing_ID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Appointments_Tests">
+            <EntityTypeMapping TypeName="MasterPieceModel.Appointments_Tests">
+              <MappingFragment StoreEntitySet="Appointments_Tests">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Appointment_ID" ColumnName="Appointment_ID" />
+                <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChatMessages">
+            <EntityTypeMapping TypeName="MasterPieceModel.ChatMessage">
+              <MappingFragment StoreEntitySet="ChatMessages">
+                <ScalarProperty Name="ChatMessage_ID" ColumnName="ChatMessage_ID" />
+                <ScalarProperty Name="ChatRoom_ID" ColumnName="ChatRoom_ID" />
+                <ScalarProperty Name="SenderId" ColumnName="SenderId" />
+                <ScalarProperty Name="MessageText" ColumnName="MessageText" />
+                <ScalarProperty Name="SentAt" ColumnName="SentAt" />
+                <ScalarProperty Name="SenderType" ColumnName="SenderType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChatRooms">
+            <EntityTypeMapping TypeName="MasterPieceModel.ChatRoom">
+              <MappingFragment StoreEntitySet="ChatRooms">
+                <ScalarProperty Name="hasUnreadMessages" ColumnName="hasUnreadMessages" />
+                <ScalarProperty Name="ChatRoom_ID" ColumnName="ChatRoom_ID" />
+                <ScalarProperty Name="LabTech_ID" ColumnName="LabTech_ID" />
+                <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contacts">
+            <EntityTypeMapping TypeName="MasterPieceModel.Contact">
+              <MappingFragment StoreEntitySet="Contact">
+                <ScalarProperty Name="contact_id" ColumnName="contact_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="sub" ColumnName="sub" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="sent_date" ColumnName="sent_date" />
+                <ScalarProperty Name="admin_response" ColumnName="admin_response" />
+                <ScalarProperty Name="response_date" ColumnName="response_date" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Feedbacks">
+            <EntityTypeMapping TypeName="MasterPieceModel.Feedback">
+              <MappingFragment StoreEntitySet="Feedback">
+                <ScalarProperty Name="Feedback_ID" ColumnName="Feedback_ID" />
+                <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Lab_Tech">
+            <EntityTypeMapping TypeName="MasterPieceModel.Lab_Tech">
+              <MappingFragment StoreEntitySet="Lab_Tech">
+                <ScalarProperty Name="Tech_ID" ColumnName="Tech_ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Package_Tests">
+            <EntityTypeMapping TypeName="MasterPieceModel.Package_Tests">
+              <MappingFragment StoreEntitySet="Package_Tests">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Package_ID" ColumnName="Package_ID" />
+                <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Packages">
+            <EntityTypeMapping TypeName="MasterPieceModel.Package">
+              <MappingFragment StoreEntitySet="Packages">
+                <ScalarProperty Name="Old_price" ColumnName="Old_price" />
+                <ScalarProperty Name="Package_ID" ColumnName="Package_ID" />
+                <ScalarProperty Name="Package_Name" ColumnName="Package_Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Patients">
+            <EntityTypeMapping TypeName="MasterPieceModel.Patient">
+              <MappingFragment StoreEntitySet="Patients">
+                <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+                <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
+                <ScalarProperty Name="Date_Of_Birth" ColumnName="Date_Of_Birth" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Marital_Status" ColumnName="Marital_Status" />
+                <ScalarProperty Name="Nationality" ColumnName="Nationality" />
+                <ScalarProperty Name="Phone_Number" ColumnName="Phone_Number" />
+                <ScalarProperty Name="Home_Address" ColumnName="Home_Address" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Test_Order">
+            <EntityTypeMapping TypeName="MasterPieceModel.Test_Order">
+              <MappingFragment StoreEntitySet="Test_Order">
+                <ScalarProperty Name="Order_ID" ColumnName="Order_ID" />
+                <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Tech_ID" ColumnName="Tech_ID" />
+                <ScalarProperty Name="Total_Price" ColumnName="Total_Price" />
+                <ScalarProperty Name="Discount_Persent" ColumnName="Discount_Persent" />
+                <ScalarProperty Name="Amount_Paid" ColumnName="Amount_Paid" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Test_Order_Tests">
+            <EntityTypeMapping TypeName="MasterPieceModel.Test_Order_Tests">
+              <MappingFragment StoreEntitySet="Test_Order_Tests">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Order_ID" ColumnName="Order_ID" />
+                <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+                <ScalarProperty Name="Result" ColumnName="Result" />
+                <ScalarProperty Name="Date_Of_Result" ColumnName="Date_Of_Result" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tests">
+            <EntityTypeMapping TypeName="MasterPieceModel.Test">
+              <MappingFragment StoreEntitySet="Tests">
+                <ScalarProperty Name="Test_ID" ColumnName="Test_ID" />
+                <ScalarProperty Name="Test_Name" ColumnName="Test_Name" />
+                <ScalarProperty Name="Alternative_Name" ColumnName="Alternative_Name" />
+                <ScalarProperty Name="Components" ColumnName="Components" />
+                <ScalarProperty Name="Normal_Range" ColumnName="Normal_Range" />
+                <ScalarProperty Name="Unit" ColumnName="Unit" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Inventory" ColumnName="Inventory" />
+                <ScalarProperty Name="Sample_Type" ColumnName="Sample_Type" />
+                <ScalarProperty Name="Expiration_Date" ColumnName="Expiration_Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="MasterPieceModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Appointment">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int64" Nullable="false" />
+    <Property Name="Full_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Gender" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Date_Of_Birth" Type="DateTime" Precision="0" />
+    <Property Name="Email_Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Phone_Number" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Home_Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Date_Of_Appo" Type="DateTime" Precision="3" />
+    <Property Name="Total_price" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Amount_paid" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Billing_ID" Type="Int32" />
+    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Appointments_Tests" Relationship="Self.FK__Appointme__Appoi__3E52440B" FromRole="Appointments" ToRole="Appointments_Tests" />
+  </EntityType>
+  <EntityType Name="Appointments_Tests">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Appointment_ID" Type="Int64" />
+    <Property Name="Test_ID" Type="Int32" />
+    <NavigationProperty Name="Appointment" Relationship="Self.FK__Appointme__Appoi__3E52440B" FromRole="Appointments_Tests" ToRole="Appointments" />
+    <NavigationProperty Name="Test" Relationship="Self.FK__Appointme__Test___3F466844" FromRole="Appointments_Tests" ToRole="Tests" />
+  </EntityType>
+  <EntityType Name="ChatMessage">
+    <Key>
+      <PropertyRef Name="ChatMessage_ID" />
+    </Key>
+    <Property Name="ChatMessage_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ChatRoom_ID" Type="Int32" />
+    <Property Name="SenderId" Type="Int32" />
+    <Property Name="MessageText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="SentAt" Type="DateTime" Precision="3" />
+    <Property Name="SenderType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="ChatRoom" Relationship="Self.FK__ChatMessa__ChatR__5BE2A6F2" FromRole="ChatMessages" ToRole="ChatRooms" />
+  </EntityType>
+  <EntityType Name="ChatRoom">
+    <Key>
+      <PropertyRef Name="ChatRoom_ID" />
+    </Key>
+    <Property Name="ChatRoom_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LabTech_ID" Type="Int32" />
+    <Property Name="Patient_ID" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="ChatMessages" Relationship="Self.FK__ChatMessa__ChatR__5BE2A6F2" FromRole="ChatRooms" ToRole="ChatMessages" />
+    <NavigationProperty Name="Lab_Tech" Relationship="Self.FK__ChatRooms__LabTe__571DF1D5" FromRole="ChatRooms" ToRole="Lab_Tech" />
+    <NavigationProperty Name="Patient" Relationship="Self.FK__ChatRooms__Patie__5812160E" FromRole="ChatRooms" ToRole="Patients" />
+    <Property Name="hasUnreadMessages" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="Contact">
+    <Key>
+      <PropertyRef Name="contact_id" />
+    </Key>
+    <Property Name="contact_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="sub" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="sent_date" Type="DateTime" Precision="0" />
+    <Property Name="admin_response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="response_date" Type="DateTime" Precision="0" />
+    <Property Name="status" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Feedback">
+    <Key>
+      <PropertyRef Name="Feedback_ID" />
+    </Key>
+    <Property Name="Feedback_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Patient_ID" Type="Int32" />
+    <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Patient" Relationship="Self.FK__Feedback__Patien__5441852A" FromRole="Feedback" ToRole="Patients" />
+  </EntityType>
+  <EntityType Name="Lab_Tech">
+    <Key>
+      <PropertyRef Name="Tech_ID" />
+    </Key>
+    <Property Name="Tech_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="ChatRooms" Relationship="Self.FK__ChatRooms__LabTe__571DF1D5" FromRole="Lab_Tech" ToRole="ChatRooms" />
+  </EntityType>
+  <EntityType Name="Package_Tests">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Package_ID" Type="Int32" />
+    <Property Name="Test_ID" Type="Int32" />
+    <NavigationProperty Name="Package" Relationship="Self.FK__Package_T__Packa__440B1D61" FromRole="Package_Tests" ToRole="Packages" />
+    <NavigationProperty Name="Test" Relationship="Self.FK__Package_T__Test___44FF419A" FromRole="Package_Tests" ToRole="Tests" />
+  </EntityType>
+  <EntityType Name="Package">
+    <Key>
+      <PropertyRef Name="Package_ID" />
+    </Key>
+    <Property Name="Package_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Package_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Price" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Picture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Package_Tests" Relationship="Self.FK__Package_T__Packa__440B1D61" FromRole="Packages" ToRole="Package_Tests" />
+    <Property Name="Old_price" Type="Decimal" Precision="10" Scale="2" />
+  </EntityType>
+  <EntityType Name="Patient">
+    <Key>
+      <PropertyRef Name="Patient_ID" />
+    </Key>
+    <Property Name="Patient_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Full_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Date_Of_Birth" Type="DateTime" Precision="0" />
+    <Property Name="Gender" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Marital_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Nationality" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Phone_Number" Type="Int32" />
+    <Property Name="Home_Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="ChatRooms" Relationship="Self.FK__ChatRooms__Patie__5812160E" FromRole="Patients" ToRole="ChatRooms" />
+    <NavigationProperty Name="Feedbacks" Relationship="Self.FK__Feedback__Patien__5441852A" FromRole="Patients" ToRole="Feedback" />
+    <NavigationProperty Name="Test_Order" Relationship="Self.FK__Test_Orde__Patie__4AB81AF0" FromRole="Patients" ToRole="Test_Order" />
+  </EntityType>
+  <EntityType Name="Test_Order">
+    <Key>
+      <PropertyRef Name="Order_ID" />
+    </Key>
+    <Property Name="Order_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Patient_ID" Type="Int32" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="Tech_ID" Type="Int32" />
+    <Property Name="Total_Price" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Discount_Persent" Type="Int32" />
+    <Property Name="Amount_Paid" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Patient" Relationship="Self.FK__Test_Orde__Patie__4AB81AF0" FromRole="Test_Order" ToRole="Patients" />
+    <NavigationProperty Name="Test_Order_Tests" Relationship="Self.FK__Test_Orde__Order__4D94879B" FromRole="Test_Order" ToRole="Test_Order_Tests" />
+  </EntityType>
+  <EntityType Name="Test_Order_Tests">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Order_ID" Type="Int32" />
+    <Property Name="Test_ID" Type="Int32" />
+    <Property Name="Result" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Date_Of_Result" Type="DateTime" Precision="0" />
+    <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Test_Order" Relationship="Self.FK__Test_Orde__Order__4D94879B" FromRole="Test_Order_Tests" ToRole="Test_Order" />
+    <NavigationProperty Name="Test" Relationship="Self.FK__Test_Orde__Test___4E88ABD4" FromRole="Test_Order_Tests" ToRole="Tests" />
+  </EntityType>
+  <EntityType Name="Test">
+    <Key>
+      <PropertyRef Name="Test_ID" />
+    </Key>
+    <Property Name="Test_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Test_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Alternative_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Components" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Normal_Range" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Unit" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Price" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Inventory" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="Sample_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expiration_Date" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="Appointments_Tests" Relationship="Self.FK__Appointme__Test___3F466844" FromRole="Tests" ToRole="Appointments_Tests" />
+    <NavigationProperty Name="Package_Tests" Relationship="Self.FK__Package_T__Test___44FF419A" FromRole="Tests" ToRole="Package_Tests" />
+    <NavigationProperty Name="Test_Order_Tests" Relationship="Self.FK__Test_Orde__Test___4E88ABD4" FromRole="Tests" ToRole="Test_Order_Tests" />
+  </EntityType>
+  <Association Name="FK__Appointme__Appoi__3E52440B">
+    <End Role="Appointments" Type="Self.Appointment" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Appointments_Tests" Type="Self.Appointments_Tests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Appointments">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Appointments_Tests">
+        <PropertyRef Name="Appointment_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Appointme__Test___3F466844">
+    <End Role="Tests" Type="Self.Test" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Appointments_Tests" Type="Self.Appointments_Tests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tests">
+        <PropertyRef Name="Test_ID" />
+      </Principal>
+      <Dependent Role="Appointments_Tests">
+        <PropertyRef Name="Test_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__ChatMessa__ChatR__5BE2A6F2">
+    <End Role="ChatRooms" Type="Self.ChatRoom" Multiplicity="0..1" />
+    <End Role="ChatMessages" Type="Self.ChatMessage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ChatRooms">
+        <PropertyRef Name="ChatRoom_ID" />
+      </Principal>
+      <Dependent Role="ChatMessages">
+        <PropertyRef Name="ChatRoom_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__ChatRooms__LabTe__571DF1D5">
+    <End Role="Lab_Tech" Type="Self.Lab_Tech" Multiplicity="0..1" />
+    <End Role="ChatRooms" Type="Self.ChatRoom" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Lab_Tech">
+        <PropertyRef Name="Tech_ID" />
+      </Principal>
+      <Dependent Role="ChatRooms">
+        <PropertyRef Name="LabTech_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__ChatRooms__Patie__5812160E">
+    <End Role="Patients" Type="Self.Patient" Multiplicity="0..1" />
+    <End Role="ChatRooms" Type="Self.ChatRoom" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Patients">
+        <PropertyRef Name="Patient_ID" />
+      </Principal>
+      <Dependent Role="ChatRooms">
+        <PropertyRef Name="Patient_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Feedback__Patien__5441852A">
+    <End Role="Patients" Type="Self.Patient" Multiplicity="0..1" />
+    <End Role="Feedback" Type="Self.Feedback" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Patients">
+        <PropertyRef Name="Patient_ID" />
+      </Principal>
+      <Dependent Role="Feedback">
+        <PropertyRef Name="Patient_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Package_T__Packa__440B1D61">
+    <End Role="Packages" Type="Self.Package" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Package_Tests" Type="Self.Package_Tests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Packages">
+        <PropertyRef Name="Package_ID" />
+      </Principal>
+      <Dependent Role="Package_Tests">
+        <PropertyRef Name="Package_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Package_T__Test___44FF419A">
+    <End Role="Tests" Type="Self.Test" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Package_Tests" Type="Self.Package_Tests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tests">
+        <PropertyRef Name="Test_ID" />
+      </Principal>
+      <Dependent Role="Package_Tests">
+        <PropertyRef Name="Test_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Test_Orde__Patie__4AB81AF0">
+    <End Role="Patients" Type="Self.Patient" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Patients">
+        <PropertyRef Name="Patient_ID" />
+      </Principal>
+      <Dependent Role="Test_Order">
+        <PropertyRef Name="Patient_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Test_Orde__Order__4D94879B">
+    <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Test_Order_Tests" Type="Self.Test_Order_Tests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Test_Order">
+        <PropertyRef Name="Order_ID" />
+      </Principal>
+      <Dependent Role="Test_Order_Tests">
+        <PropertyRef Name="Order_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Test_Orde__Test___4E88ABD4">
+    <End Role="Tests" Type="Self.Test" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Test_Order_Tests" Type="Self.Test_Order_Tests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tests">
+        <PropertyRef Name="Test_ID" />
+      </Principal>
+      <Dependent Role="Test_Order_Tests">
+        <PropertyRef Name="Test_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="MasterPieceEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Appointments" EntityType="Self.Appointment" />
+    <EntitySet Name="Appointments_Tests" EntityType="Self.Appointments_Tests" />
+    <EntitySet Name="ChatMessages" EntityType="Self.ChatMessage" />
+    <EntitySet Name="ChatRooms" EntityType="Self.ChatRoom" />
+    <EntitySet Name="Contacts" EntityType="Self.Contact" />
+    <EntitySet Name="Feedbacks" EntityType="Self.Feedback" />
+    <EntitySet Name="Lab_Tech" EntityType="Self.Lab_Tech" />
+    <EntitySet Name="Package_Tests" EntityType="Self.Package_Tests" />
+    <EntitySet Name="Packages" EntityType="Self.Package" />
+    <EntitySet Name="Patients" EntityType="Self.Patient" />
+    <EntitySet Name="Test_Order" EntityType="Self.Test_Order" />
+    <EntitySet Name="Test_Order_Tests" EntityType="Self.Test_Order_Tests" />
+    <EntitySet Name="Tests" EntityType="Self.Test" />
+    <AssociationSet Name="FK__Appointme__Appoi__3E52440B" Association="Self.FK__Appointme__Appoi__3E52440B">
+      <End Role="Appointments" EntitySet="Appointments" />
+      <End Role="Appointments_Tests" EntitySet="Appointments_Tests" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Appointme__Test___3F466844" Association="Self.FK__Appointme__Test___3F466844">
+      <End Role="Tests" EntitySet="Tests" />
+      <End Role="Appointments_Tests" EntitySet="Appointments_Tests" />
+    </AssociationSet>
+    <AssociationSet Name="FK__ChatMessa__ChatR__5BE2A6F2" Association="Self.FK__ChatMessa__ChatR__5BE2A6F2">
+      <End Role="ChatRooms" EntitySet="ChatRooms" />
+      <End Role="ChatMessages" EntitySet="ChatMessages" />
+    </AssociationSet>
+    <AssociationSet Name="FK__ChatRooms__LabTe__571DF1D5" Association="Self.FK__ChatRooms__LabTe__571DF1D5">
+      <End Role="Lab_Tech" EntitySet="Lab_Tech" />
+      <End Role="ChatRooms" EntitySet="ChatRooms" />
+    </AssociationSet>
+    <AssociationSet Name="FK__ChatRooms__Patie__5812160E" Association="Self.FK__ChatRooms__Patie__5812160E">
+      <End Role="Patients" EntitySet="Patients" />
+      <End Role="ChatRooms" EntitySet="ChatRooms" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Feedback__Patien__5441852A" Association="Self.FK__Feedback__Patien__5441852A">
+      <End Role="Patients" EntitySet="Patients" />
+      <End Role="Feedback" EntitySet="Feedbacks" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Package_T__Packa__440B1D61" Association="Self.FK__Package_T__Packa__440B1D61">
+      <End Role="Packages" EntitySet="Packages" />
+      <End Role="Package_Tests" EntitySet="Package_Tests" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Package_T__Test___44FF419A" Association="Self.FK__Package_T__Test___44FF419A">
+      <End Role="Tests" EntitySet="Tests" />
+      <End Role="Package_Tests" EntitySet="Package_Tests" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Test_Orde__Patie__4AB81AF0" Association="Self.FK__Test_Orde__Patie__4AB81AF0">
+      <End Role="Patients" EntitySet="Patients" />
+      <End Role="Test_Order" EntitySet="Test_Order" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Test_Orde__Order__4D94879B" Association="Self.FK__Test_Orde__Order__4D94879B">
+      <End Role="Test_Order" EntitySet="Test_Order" />
+      <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Test_Orde__Test___4E88ABD4" Association="Self.FK__Test_Orde__Test___4E88ABD4">
+      <End Role="Tests" EntitySet="Tests" />
+      <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
