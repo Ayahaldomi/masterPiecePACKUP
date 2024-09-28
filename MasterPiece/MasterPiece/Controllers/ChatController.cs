@@ -14,33 +14,47 @@ namespace MasterPiece.Controllers
     {
         private MasterPieceEntities _context = new MasterPieceEntities();
         // GET: Chat
-        public ActionResult Chat(int chatRoomId)
+        public ActionResult Chat(int? chatRoomId = null)
         {
-            var chatRoom = _context.ChatRooms.Find(chatRoomId);
-            if (chatRoom == null)
-            {
-                return HttpNotFound("Chat room not found.");
-            }
-
             // Get the list of all chat rooms
             var chatRooms = _context.ChatRooms.ToList();
 
-            // Get the messages for the specific chat room
-            var messages = _context.ChatMessages
-                .Where(m => m.ChatRoom_ID == chatRoomId)
-                .OrderBy(m => m.SentAt)
-                .ToList();
+            // Check if a specific chat room was provided
+            List<ChatMessage> messages = new List<ChatMessage>();
+            if (chatRoomId.HasValue)
+            {
+                var chatRoom = _context.ChatRooms.Find(chatRoomId.Value);
+                if (chatRoom == null)
+                {
+                    return HttpNotFound("Chat room not found.");
+                }
+                chatRoom.hasUnreadMessages = false;
+                _context.Entry(chatRoom).State = EntityState.Modified;
+                _context.SaveChanges();
+                // Get the messages for the specific chat room
+                messages = _context.ChatMessages
+                    .Where(m => m.ChatRoom_ID == chatRoomId.Value)
+                    .OrderBy(m => m.SentAt)
+                    .ToList();
 
-            // Set ViewBag data for use in the view
-            ViewBag.ChatRoomId = chatRoomId;
-            ViewBag.PatientId = chatRoom.Patient_ID;
-            ViewBag.LabTechId = chatRoom.LabTech_ID;
+                // Set ViewBag data for use in the view
+                ViewBag.ChatRoomId = chatRoomId;
+                ViewBag.PatientId = chatRoom.Patient_ID;
+                ViewBag.LabTechId = chatRoom.LabTech_ID;
 
-            // Get the patient's payment status
-            var patient = _context.Patients.Find(chatRoom.Patient_ID);
-            ViewBag.PaymentStatus = patient?.PaymentStatus;
+                var patient = _context.Patients.Find(chatRoom.Patient_ID);
+                ViewBag.PaymentStatus = patient?.PaymentStatus;
+            }
+            else
+            {
+                // Set default values for when no chat room is selected
+                ViewBag.ChatRoomId = null;
+                ViewBag.PatientId = null;
+                ViewBag.LabTechId = null;
+                ViewBag.PaymentStatus = "N/A";
+            }
 
-            // Create the view model with chat rooms and messages
+            // Create the view model with chat rooms and messages (empty if no room selected)
             var viewModel = new ChatMessagesAndRooms
             {
                 Rooms = chatRooms,
@@ -49,6 +63,7 @@ namespace MasterPiece.Controllers
 
             return View(viewModel);
         }
+
         public ActionResult Chat2(int chatRoomId)
         {
             var chatRoom = _context.ChatRooms.Find(chatRoomId);
@@ -133,10 +148,13 @@ namespace MasterPiece.Controllers
             {
                 return HttpNotFound("Chat room not found.");
             }
+            chatRoom.hasUnreadMessages = true;
+            _context.Entry(chatRoom).State = EntityState.Modified;
+            _context.SaveChanges();
 
             // Check if the sender is a patient and if they are allowed to send more messages
-            
-                int patientMessageCount = _context.ChatMessages
+
+            int patientMessageCount = _context.ChatMessages
                     .Where(m => m.ChatRoom_ID == chatRoomId && m.SenderId == senderId && m.SenderType == "Patient")
                     .Count();
 
@@ -323,7 +341,7 @@ namespace MasterPiece.Controllers
         {
 
             var chatRooms = _context.ChatRooms
-                .Where(cr => cr.LabTech_ID == labTechId)
+                .Where(cr => cr.LabTech_ID == labTechId).OrderByDescending(cr => cr.CreatedAt)
                 .Include(cr => cr.Patient)
                 .ToList();
 

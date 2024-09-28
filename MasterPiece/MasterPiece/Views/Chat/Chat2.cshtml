@@ -110,16 +110,19 @@
                                                         <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
                                                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
                                                                  alt="avatar 3" style="width: 40px; height: 100%;">
-                                                            @using (Html.BeginForm("SendMessage2", "Chat", FormMethod.Post))
+                                                            @using (Html.BeginForm("SendMessage2", "Chat", FormMethod.Post, new { @class = "w-100" }))
                                                             {
                                                                 @Html.Hidden("chatRoomId", (int)ViewBag.ChatRoomId)
                                                                 @Html.Hidden("senderId", (int)ViewBag.PatientId)
                                                                 @Html.Hidden("senderType", "Patient")
 
                                                                 @*<textarea id="messageInput" name="messageText" rows="3" class="form-control form-control-lg"></textarea>*@
-                                                                <input type="text" class="form-control form-control-lg" id="messageInput"
-                                                                       placeholder="Type message" name="messageText">
-                                                                <button type="submit" class="btn btn-primary mt-2">Send</button>
+                                                        <div class="d-flex align-items-center w-100">
+                                                            <input type="text" class="form-control form-control-lg me-2 flex-grow-1 test" id="messageInput" placeholder="Type message" name="messageText" style="width: 80%;">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="fas fa-paper-plane"></i> Send
+                                                            </button>
+                                                        </div>
                                                             }
                                                         </div>
                                                     }

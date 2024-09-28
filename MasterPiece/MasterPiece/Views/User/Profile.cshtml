@@ -31,6 +31,33 @@
     .card.mb-4 {
         height: 100%;
     }
+    button.btn.btn-outline-primary {
+        width: 250px;
+    }
+    .table-fixed th,
+    .table-fixed td {
+        width: 25%; /* Adjust this percentage or set a specific pixel value */
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 0;
+    }
+
+    .table-responsive th:nth-child(1), .table-responsive td:nth-child(1) {
+        width: 10%; /* Column 1 (Test ID) */
+    }
+
+    .table-responsive th:nth-child(2), .table-responsive td:nth-child(2) {
+        width: 40%; /* Column 2 (Tests) */
+    }
+
+    .table-responsive th:nth-child(3), .table-responsive td:nth-child(3) {
+        width: 20%; /* Column 3 (Test Date) */
+    }
+
+    .table-responsive th:nth-child(4), .table-responsive td:nth-child(4) {
+        width: 30%; /* Column 4 (View Details) */
+    }
 </style>
 
 
@@ -73,14 +100,18 @@
                                 Give Us Your Feedback
                             </button>
                         </p>
+                        <div class="d-flex justify-content-center mb-2">
+                            <a href="@Url.Action("LogOut", "User")"> <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">Logout</button> </a>
+                        </div>
                     </div>
                 </div>
 
             </div>
             <div class="col-lg-8">
                 <div class="card mb-4">
+                    <h3 class="text-center mt-4">Your Test Result</h3>
                     <div class="table-responsive">
-                        <table class="table table-borderless  mb-0 text-center">
+                        <table class="table table-borderless table-fixed  mb-0 text-center">
                             <thead>
                                 <tr>
                                     <th scope="col">Test ID</th>
@@ -92,20 +123,27 @@
                             <tbody>
                                 @foreach (var s in Model)
                                 {
-                                    <tr>
-                                        <th scope="row">@s.Order_ID</th>
-                                        <td>
-                                            @foreach (var n in s.Test_Order_Tests)
-                                            {
-                                                if (n.Order_ID == s.Order_ID)
+                                    if (s.Status == "Completed")
+                                    {
+                                        <tr>
+                                            <th scope="row">@s.Order_ID</th>
+                                            <td>
+                                                @foreach (var n in s.Test_Order_Tests)
                                                 {
-                                                    <span>@n.Test.Test_Name</span>
+                                                    if (n.Order_ID == s.Order_ID)
+                                                    {
+                                                        <span>@n.Test.Test_Name</span>
+                                                    }
                                                 }
-                                            }
-                                        </td>
-                                        <td>@s.Date</td>
-                                        <td><a href="@Url.Action("DownloadPdf", "Patients", new {OrderID = s.Order_ID})" target="_blank"><button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-secondary">Download Results As PDF</button></a></td>
-                                    </tr>
+                                            </td>
+                                            <td>
+                                                @(s.Date.HasValue ? s.Date.Value.ToString("yyyy-MM-dd") : "N/A")
+                                            </td>
+                                            <td><a href="@Url.Action("DownloadPdf", "Patients", new {OrderID = s.Order_ID})" target="_blank"><button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-secondary">Download Results As PDF</button></a></td>
+                                        </tr>
+
+                                    }
+
                                 }
                             </tbody>
                         </table>

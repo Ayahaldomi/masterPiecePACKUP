@@ -1,0 +1,167 @@
+﻿@model MasterPiece.Models.Contact
+
+@{
+    ViewBag.Title = "contactDetails";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    body {
+        background-color: #69acc759;
+    }
+</style>
+<div class="row ">
+    <div class="offset-xl-3 col-xl-6 col-12">
+        <!-- card -->
+
+        <div class="card mb-4">
+            <div id="testForm">
+                <!-- card body -->
+                <div class="card-body">
+                    <h4 class="mb-4">Customer Message</h4>
+
+                    <!-- row -->
+                    <div class="row gx-3">
+                        <!-- input -->
+                        <div class="mb-3 col-md-12">
+                            <label class="form-label" for="firstName">Name</label>
+                            <input type="text" class="form-control" placeholder="Enter first name" id="firstName" disabled value="@Model.name">
+                        </div>
+                        <!-- input -->
+                        <div class="mb-3 col-md-12">
+                            <label class="form-label" for="lastName">Email</label>
+                            <input type="text" class="form-control" placeholder="Last Name" id="lastName" disabled value="@Model.email">
+
+                        </div>
+                        <!-- input -->
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="email">Subject</label>
+                            <input type="email" class="form-control" placeholder="Enter email address" id="email" disabled value="@Model.sub">
+
+                        </div>
+                        <!-- input -->
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="phone">Date</label>
+                            <input type="date" class="form-control" placeholder="Enter date" id="sent_date" disabled
+                                   value="@(Model.sent_date.HasValue ? Model.sent_date.Value.ToString("yyyy-MM-dd") : "")">
+                        </div>
+                        <div class="mb-3 col-md-12">
+                            <label class="form-label" for="phone">Message</label>
+                            <textarea class="form-control" placeholder="Enter your message" id="message" rows="4" disabled >@Model.message</textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+        <form id="formData" action="/Admin/contactDetails" method="post">
+            <div class="card mb-4">
+                <!-- card body -->
+                <div class="card-body">
+                    <!-- heading -->
+                    <div class="mb-4">
+                        <h4 class="mb-1">Admin</h4>
+                        <p>Please Enter Your Answer To The Question</p>
+                    </div>
+                    <input type="hidden" name="contact_id" value="@Model.contact_id" />
+                    <!-- row -->
+                    <div class="row gx-3">
+                        <!-- input -->
+                        <div class="mb-3 col-md-12">
+                            <label class="form-label" for="phone">Message</label>
+                            <textarea class="form-control" placeholder="Enter your message" id="message" rows="4" name="admin_response"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <!-- buttons -->
+                            <a href="@Url.Action("ContactAdmin", "Admin")" class="btn btn-outline-primary me-2">Cancel</a>
+                            <button class="btn btn-primary" type="submit" >Send Answer</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <!-- card -->
+
+            
+        </form>
+    </div>
+</div>
+
+@*<h2>contactDetails</h2>
+
+    <div>
+        <h4>Contact</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.email)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.email)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.sub)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.sub)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.message)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.message)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.sent_date)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.sent_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.admin_response)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.admin_response)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.response_date)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.response_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.status)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.status)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.contact_id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>*@

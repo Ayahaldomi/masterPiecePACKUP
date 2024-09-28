@@ -103,9 +103,10 @@
                 <h5 class="modal-title" id="testFormModalLabel">New Test Form</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                @using (Html.BeginForm("CreateTest", "Admin", FormMethod.Post))
-                {
+            @using (Html.BeginForm("CreateTest", "Admin", FormMethod.Post))
+            {
+                <div class="modal-body">
+
                     @Html.AntiForgeryToken()
                     <div class="form-horizontal">
 
@@ -189,12 +190,13 @@
                             </div>
                         </div>
                     </div>
-                }
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
-            </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -207,9 +209,10 @@
                 <h5 class="modal-title" id="editTestModalLabel">Edit Test</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                @using (Html.BeginForm("EditTest", "Admin", FormMethod.Post))
-                {
+            @using (Html.BeginForm("EditTest", "Admin", FormMethod.Post))
+            {
+                <div class="modal-body">
+
                     @Html.AntiForgeryToken()
                     <div class="form-horizontal">
                         <!-- Hidden field for Test ID -->
@@ -290,13 +293,14 @@
                             </div>
                         </div>
                     </div>
-                }
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            }
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -329,7 +333,7 @@
     function populateEditModal(testId, testName, description, normalRange, price, inventory, components, unit, sampleType, expirationDate) {
         document.getElementById("editTestId").value = testId;
         document.getElementById("editTestName").value = testName;
-        document.getElementById("editAlternativeName").value = components; // Assuming this is the alternative name field
+        document.getElementById("editAlternativeName").value = components;
         document.getElementById("editNormalRange").value = normalRange;
         document.getElementById("editPrice").value = price;
         document.getElementById("editInventory").value = inventory;
@@ -337,7 +341,25 @@
         document.getElementById("editUnit").value = unit;
         document.getElementById("editDescription").value = description;
         document.getElementById("editSampleType").value = sampleType;
-        document.getElementById("editExpirationDate").value = expirationDate;
+
+        // Format the expiration date to 'YYYY-MM-DD' before setting the value
+        if (expirationDate) {
+            // Convert the date to YYYY-MM-DD format if it's not empty or null
+            var formattedDate = new Date(expirationDate).toISOString().split('T')[0];
+            document.getElementById("editExpirationDate").value = formattedDate;
+        } else {
+            // Clear the field if no date is provided
+            document.getElementById("editExpirationDate").value = '';
+        }
+    }
+
+
+    function setDeleteTest(testId, testName) {
+        // Set the hidden input field in the delete modal to the test ID
+        document.getElementById("deleteTestId").value = testId;
+
+        // Update the delete confirmation message with the test name
+        document.getElementById("deleteTestName").innerText = testName;
     }
 </script>
 <script>

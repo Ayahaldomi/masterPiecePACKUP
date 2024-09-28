@@ -43,73 +43,127 @@
         background-color: #00000012;
     }
 </style>
+<style>
+    #chat3 .form-control {
+        border-color: #00000015;
+    }
+
+    input#messageInput {
+        border-color: #00000030 !important;
+    }
+
+    #chat3 .form-control:focus {
+        border-color: transparent;
+        box-shadow: inset 0px 0px 0px 1px transparent;
+    }
+
+    .badge-dot {
+        border-radius: 50%;
+        height: 10px;
+        width: 10px;
+        margin-left: 2.9rem;
+        margin-top: -.75rem;
+    }
+
+
+    .d-flex.align-items-center.w-100.test {
+        justify-content: end;
+    }
+    button.btn.btn-primary.test {
+        margin-top: 18px;
+        margin-bottom: 15px;
+    }
+</style>
 
 <!-- Chat messages display area -->
 
 
 
 
-    <div class="container ">
+<div class="container ">
 
-        <div class="row">
-            <div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
 
-                <div class="card" id="chat3" style="border-radius: 15px;">
-                    <div class="card-body">
+            <div class="card" id="chat3" style="border-radius: 15px;">
+                <div class="card-body">
 
-                        <div class="row">
-                            <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
 
-                                <div class="p-3">
+                            <div class="p-3">
 
-                                    <div class="input-group rounded mb-3">
-                                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                                               aria-describedby="search-addon" />
-                                        <span class="input-group-text border-0" id="search-addon">
-                                            <i class="fas fa-search"></i>
-                                        </span>
+                                <!-- Search Input -->
+                                <div class="input-group rounded mb-3">
+                                    <input type="search" class="form-control rounded" placeholder="Search chat rooms..." aria-label="Search" aria-describedby="search-addon" id="searchInput">
+                                    <span class="input-group-text border-0" id="search-addon">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <div class="btn-group">
+                                        <button id="showAll" class="btn btn-outline-primary">All</button>
+                                        <button id="showUnread" class="btn btn-outline-primary">Unread Messages</button>
                                     </div>
-                                    <div data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow-y: auto;">
-                                        <ul class="list-unstyled mb-0">
-                                            
-                                            @Html.Partial("_ChatRoomDoctor", Model.Rooms)
-                                        </ul>
-                                    </div>
+                                </div>
+                                <div data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow-y: auto;">
+                                    <ul class="list-unstyled mb-0" id="chatRoomList">
 
+                                        @Html.Partial("_ChatRoomDoctor", Model.Rooms)
+                                    </ul>
                                 </div>
 
                             </div>
 
-                            <div class="col-md-6 col-lg-7 col-xl-8">
+                        </div>
 
-                                <div id="chatMessages" class="pt-3 pe-3" style="position: relative; height: 400px; overflow-y: auto;">
-
-                                    @Html.Partial("_ChatMessagesPartial", Model.Messages)
-
+                        <div class="col-md-6 col-lg-7 col-xl-8">
+                            @if (ViewBag.ChatRoomId != null)
+                            {
+                                <div class="d-flex align-items-center w-100 test">
+                                    <a href="@Url.Action("patientDoctor", "Admin", new {patientID = ViewBag.PatientId})">
+                                        <button type="button" class="btn btn-primary test">
+                                            <i class="fas fa-paper-plane"></i> View Patient Details
+                                        </button>
+                                    </a>
                                 </div>
+                            }
 
+
+
+                            <div id="chatMessages" class="pt-3 pe-3" style="position: relative; height: 400px; overflow-y: auto;">
+                                @if (ViewBag.ChatRoomId != null)
+                                {
+                                    @Html.Partial("_ChatMessagesPartial", Model.Messages)
+                                }
+                                else
+                                {
+                                    <p>Select a chat room to view messages</p>
+                                }
+                            </div>
+
+
+                            @if (ViewBag.ChatRoomId != null)
+                            {
                                 <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                                         alt="avatar 3" style="width: 40px; height: 100%;">
-                                    @using (Html.BeginForm("SendMessage", "Chat", FormMethod.Post))
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
+                                    @using (Html.BeginForm("SendMessage", "Chat", FormMethod.Post, new { @class = "w-100" }))
                                     {
                                         @Html.Hidden("chatRoomId", (int)ViewBag.ChatRoomId)
                                         @Html.Hidden("senderId", (int)ViewBag.LabTechId)
                                         @Html.Hidden("senderType", "LabTech")
 
-                                        @*<textarea id="messageInput" name="messageText" rows="3" class="form-control form-control-lg"></textarea>*@
-                                        <input type="text" class="form-control form-control-lg" id="messageInput"
-                                               placeholder="Type message" name="messageText">
-                                        <button type="submit" class="btn btn-primary mt-2">Send</button>
-                                    }
-                                    @*<input type="text" class="form-control form-control-lg" id="exampleFormControlInput2"
-                                               placeholder="Type message">
-                                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
-                                        <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
-                                        <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>*@
-                                </div>
 
-                            </div>
+                                        <div class="d-flex align-items-center w-100">
+                                            <input type="text" class="form-control form-control-lg me-2 flex-grow-1 test" id="messageInput" placeholder="Type message" name="messageText" style="width: 80%;">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-paper-plane"></i> Send
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
                         </div>
 
                     </div>
@@ -119,9 +173,14 @@
         </div>
 
     </div>
+</div>
+
+
 
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
     <script src="~/Scripts/jquery-3.7.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -154,6 +213,43 @@
 
             // Scroll to the bottom of the chat messages div on page load
             $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+
+
+            // Search functionality
+            $('#searchInput').on('input', function () {
+                var searchTerm = $(this).val().toLowerCase();
+
+                // Loop through each chat room item and hide/show based on the search
+                $('#chatRoomList .chat-room-item').each(function () {
+                    var patientName = $(this).data('patient-name');
+
+                    if (patientName.includes(searchTerm)) {
+                        $(this).show();  // Show if the name matches the search term
+                    } else {
+                        $(this).hide();  // Hide if it doesn't match
+                    }
+                });
+            });
+
+
+            // Show all chat rooms
+            $('#showAll').on('click', function () {
+                $('#chatRoomList .chat-room-item').each(function () {
+                    $(this).show(); // Show all chat rooms
+                });
+            });
+
+            // Show only chat rooms with unread messages
+            $('#showUnread').on('click', function () {
+                
+                $('#chatRoomList .chat-room-item').each(function () {
+                    if ($(this).data('has-unread') == 'True') {
+                        $(this).show();  // Show if it has unread messages
+                    } else {
+                        $(this).hide();  // Hide if it doesn't have unread messages
+                    }
+                });
+            });
         });
     </script>
 }

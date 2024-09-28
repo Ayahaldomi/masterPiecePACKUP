@@ -32,6 +32,7 @@ namespace MasterPiece.Models
         public string Home_Address { get; set; }
         public string Note { get; set; }
         public string PaymentStatus { get; set; }
+        public string Email { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChatRoom> ChatRooms { get; set; }

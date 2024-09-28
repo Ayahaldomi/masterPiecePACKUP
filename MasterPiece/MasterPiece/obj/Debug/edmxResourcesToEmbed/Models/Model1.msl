@@ -111,6 +111,7 @@
     <EntitySetMapping Name="Patients">
       <EntityTypeMapping TypeName="MasterPieceModel.Patient">
         <MappingFragment StoreEntitySet="Patients">
+          <ScalarProperty Name="Email" ColumnName="Email" />
           <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
           <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
           <ScalarProperty Name="Date_Of_Birth" ColumnName="Date_Of_Birth" />

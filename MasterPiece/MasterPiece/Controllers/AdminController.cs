@@ -9,7 +9,8 @@ using System.Web.Mvc;
 using System.IO;
 using Microsoft.AspNet.SignalR.Hubs;
 using PayPal.Api;
-
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace MasterPiece.Controllers
 {
@@ -84,9 +85,9 @@ namespace MasterPiece.Controllers
             }
         }
 
-        public ActionResult AddPatientTests()//int orderID
+        public ActionResult AddPatientTests(int orderID)//int orderID
         {
-            var order = db.Test_Order.Find(1002);
+            var order = db.Test_Order.Find(orderID);
             ViewBag.TestsList = db.Tests.ToList();
             return View(order);
         }
@@ -142,9 +143,9 @@ namespace MasterPiece.Controllers
         }
 
 
-        public ActionResult AddPatientPayment() //int orderId
+        public ActionResult AddPatientPayment(int orderId) //int orderId
         {
-            var order = db.Test_Order.Find(1002);
+            var order = db.Test_Order.Find(orderId);
             return View(order);
         }
 
@@ -161,10 +162,14 @@ namespace MasterPiece.Controllers
             {
                 Order.Discount_Persent = model.Discount_Persent;
             }
+            if (Order.Amount_Paid == null)
+            {
+                Order.Amount_Paid = 0;
+            }
             Order.Amount_Paid += model.Amount_Paid;
             db.Entry(Order).State = EntityState.Modified;
             db.SaveChanges();
-            return RedirectToAction("AddPatientPayment");//model.Order_ID
+            return RedirectToAction("AddPatientPayment", new { orderId  = model.Order_ID });//model.Order_ID
 
 
         }
@@ -202,11 +207,49 @@ namespace MasterPiece.Controllers
             return View(tests);
         }
 
-        public ActionResult TestResultsAdd()
+        public ActionResult TestResultsAdd(int OrderID)// int OrderID
         {
-            return View();
+            var order = db.Test_Order.Find(OrderID);
+            return View(order);
         }
 
+        public ActionResult Status(int Orderid) 
+        {
+            var order = db.Test_Order.Find(Orderid);
+            order.Status = "Completed";
+            db.Entry(order).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("TestResultsAdd", new { OrderID = Orderid });
+
+        }
+
+        [HttpPost]
+        public ActionResult SaveTestResults(Test_Order model)
+        {
+            if (ModelState.IsValid)
+            {
+                foreach (var testResult in model.Test_Order_Tests)
+                {
+                    var existingTestResult = db.Test_Order_Tests.FirstOrDefault(t => t.ID == testResult.ID);
+                    if (testResult.Result != null)
+                    {
+                        existingTestResult.Result = testResult.Result;
+                        existingTestResult.Status = "Completed";
+                        db.Entry(existingTestResult).State = EntityState.Modified;
+                    }
+                }
+                db.SaveChanges();
+
+                return RedirectToAction("TestResultsAdd", new { Orderid = model.Order_ID });
+            }
+
+            return View(model); // Return view with model if there's an error
+        }
+
+        
+
+
+        ///////////////////////////////////////  Appointment  ////////////////////////////////////////////////////
         public ActionResult Appointment()
         {
             var appointments = from a in db.Appointments
@@ -239,11 +282,51 @@ namespace MasterPiece.Controllers
         {
             return View();
         }
-
+        ///////////////////////////////////////// Tests Documentation ///////////////////////////////////////////////
         public ActionResult TestsDocumentation()
         {
             var tests = db.Tests.ToList();
             return View(tests);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateTest(Test model) 
+        {
+            if (ModelState.IsValid)
+            {
+                db.Tests.Add(model);
+                db.SaveChanges();
+
+            }
+
+            return RedirectToAction("TestsDocumentation");
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditTest(Test model)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(model).State = EntityState.Modified;
+                db.SaveChanges();
+               
+            }
+            return RedirectToAction("TestsDocumentation");
+        }
+
+        [HttpPost]
+        public ActionResult DeleteTest(int Test_ID)
+        {
+            var test = db.Tests.Find(Test_ID);
+            if (test != null)
+            {
+                db.Tests.Remove(test);
+                db.SaveChanges();
+            }
+            return RedirectToAction("TestsDocumentation");
         }
 
         public ActionResult TestsDocumentationssssssssssss()
@@ -258,7 +341,7 @@ namespace MasterPiece.Controllers
 
 
 
-        ////////////////////////////////////////////Emloyee Page ///////////////////////////////////
+        //////////////////////////////////////////// Emloyee Page ///////////////////////////////////
       
         public ActionResult Employees()
         {
@@ -455,7 +538,7 @@ namespace MasterPiece.Controllers
                 }
                 db.SaveChanges();
 
-                db.Entry(package).State = System.Data.Entity.EntityState.Modified;
+                db.Entry(package).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Packages");
             }
@@ -467,7 +550,6 @@ namespace MasterPiece.Controllers
         [HttpPost]
         public ActionResult DeletePackage(int Package_ID)
         {
-            // Find the package by ID
             var package = db.Packages.Find(Package_ID);
 
             if (package == null)
@@ -475,43 +557,20 @@ namespace MasterPiece.Controllers
                 return HttpNotFound();
             }
 
-            // Find all tests associated with this package
             var packageTests = db.Package_Tests.Where(pt => pt.Package_ID == Package_ID).ToList();
 
-            // Remove all associated tests for this package
             db.Package_Tests.RemoveRange(packageTests);
 
-            // Remove the package itself
             db.Packages.Remove(package);
 
-            // Save changes to the database
             db.SaveChanges();
 
-            // Redirect back to the package list or any other page
             return RedirectToAction("Packages");
         }
 
 
 
-        //public ActionResult EditPackage(int id)
-        //{
-        //    // Fetch the package details
-        //    var package = db.Packages.Include(p => p.Package_Tests.Select(t => t.Test)).FirstOrDefault(p => p.Package_ID == id);
-
-        //    // Fetch the list of all tests
-        //    var tests = db.Tests.Select(t => new { t.Test_ID, t.Test_Name, t.Price }).ToList();
-
-        //    // Prepare the selected tests to pass to the view
-        //    var selectedTests = package.Package_Tests.Select(pt => new {
-        //        pt.Test.Test_Name,
-        //        pt.Test.Price
-        //    }).ToList();
-
-        //    ViewBag.TestsList = tests;
-        //    ViewBag.SelectedTests = selectedTests;
-
-        //    return View(package);
-        //}
+        
 
 
         ///////////////////////////////////////////////////////          FeedBack          ///////////////////////////////////////////////////////////
@@ -571,16 +630,122 @@ namespace MasterPiece.Controllers
             return RedirectToAction("FeedBacks");
         }
 
+
+        ////////////////////////////////////////////  Contact Us ////////////////////////////////////////////
+        
+        public ActionResult ContactAdmin()
+        {
+            var contact = db.Contacts.OrderByDescending(l => l.sent_date).ToList();
+
+        return View(contact); 
+        
+        }
+
+        public ActionResult contactDetails(int contactID)
+        {
+            var contact = db.Contacts.Find(contactID);
+            return View(contact);
+        }
+
+        [HttpPost]
+        public ActionResult contactDetails(Contact contact)
+        {
+            var contactPUT = db.Contacts.Find(contact.contact_id);
+            contactPUT.admin_response = contact.admin_response;
+            contactPUT.response_date = DateTime.Now;
+            contactPUT.status = 1;
+
+            db.Entry(contactPUT).State = EntityState.Modified;
+            db.SaveChanges();
+
+            try
+            {
+                string fromEmail = "election2024jordan@gmail.com";
+                string fromName = "PrimeLab";
+                string subjectText = "Patient ID";
+                string messageText = $@"
+                     <html>
+                    <body>
+                        <h2>Hello</h2>
+                        <pre>{contactPUT.admin_response}</pre>
+                        <p>If you have any more questions, feel free to reach out to us.</p>
+                        <p>With best regards,<br>Admin</p>
+                    </body>
+                    </html>";
+                string toEmail = contactPUT.email;
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 465; // Port 465 for SSL
+
+                string smtpUsername = "election2024jordan@gmail.com";
+                string smtpPassword = "zwht jwiz ivfr viyt"; // Ensure this is correct
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(fromName, fromEmail));
+                message.To.Add(new MailboxAddress("", toEmail));
+                message.Subject = subjectText;
+                message.Body = new TextPart("html") { Text = messageText };
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpServer, smtpPort, true); // Use SSL
+                    client.Authenticate(smtpUsername, smtpPassword);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+                TempData["Email"] = "An Email With Your Patient ID Was Sent To You!";
+                return RedirectToAction("ContactAdmin");
+            }
+            catch
+            {
+                return RedirectToAction("ContactAdmin");
+            }
+        }
+
         //////////////////////////////////////////// doctor side ////////////////////////////////////////////
 
-        public ActionResult DoctorReport()
+
+        public ActionResult DoctorDashboard()
         {
             return View();
         }
-
-        public ActionResult DoctorReportAdd()
+        public ActionResult DoctorReport()
         {
-            return View();
+            var ordersWithDoctorReport = db.Test_Order
+                   .Where(order => order.Test_Order_Tests.Any(t => t.Test.Test_Name == "Doctor Report"))
+                   .ToList(); 
+            
+            return View(ordersWithDoctorReport);
+        }
+
+        public ActionResult DoctorReportAdd(int orderID)
+        {
+            var order = db.Test_Order.Find(orderID);
+            return View(order);
+        }
+
+        [HttpPost]
+        public ActionResult saveDoctorReport(int orderID, string DoctorReport)
+        {
+            var test = db.Test_Order_Tests.Where(t => t.Order_ID == orderID && t.Test.Test_Name == "Doctor Report").FirstOrDefault();
+            test.Result = DoctorReport;
+            test.Status = "Completed";
+            db.Entry(test).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("DoctorReportAdd", new { orderID = orderID });
+
+        }
+
+
+        public ActionResult patientDoctor(int patientID)
+        {
+            var patient = new PatientAndTests
+            {
+                Patients = db.Patients.Find(patientID),
+                TestOrders = db.Test_Order.Where(p => p.Patient_ID == patientID).ToList()
+            };
+            return View(patient);
+
         }
 
 

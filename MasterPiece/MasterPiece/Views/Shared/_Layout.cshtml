@@ -56,7 +56,15 @@
                 <a href="@Url.Action("Contact", "Home")" class="nav-item nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Contact" && ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")">Contact</a>
 
             </div>
-            <a href="@Url.Action("Login", "User")" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block @(ViewContext.RouteData.Values["action"].ToString() == "Login" && ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">Results / Login<i class="fa fa-arrow-right ms-3"></i></a>
+            @if (Session["userSession"] == null)
+            {
+                <a href="@Url.Action("Login", "User")" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block @(ViewContext.RouteData.Values["action"].ToString() == "Login" && ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">Results / Login<i class="fa fa-arrow-right ms-3"></i></a>
+
+            }
+            else
+            {
+                <a href="@Url.Action("Profile", "User")" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block @(ViewContext.RouteData.Values["action"].ToString() == "Login" && ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")">Profile<i class="fa fa-arrow-right ms-3"></i></a>
+            }
         </div>
     </nav>
     <!-- Navbar End -->

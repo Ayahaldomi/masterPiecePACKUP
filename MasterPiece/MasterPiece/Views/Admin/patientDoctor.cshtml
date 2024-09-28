@@ -1,0 +1,173 @@
+﻿@model MasterPiece.ViewModel.PatientAndTests
+
+@{
+    ViewBag.Title = "patientDoctor";
+    Layout = "~/Views/Shared/_LayoutDoctor.cshtml";
+}
+
+@{
+    string dateOfBirth = "N/A";
+    int age = 0;
+
+    if (Model.Patients.Date_Of_Birth.HasValue)
+    {
+        dateOfBirth = Model.Patients.Date_Of_Birth.Value.ToString("dd/MM/yyyy");
+        age = (DateTime.Now.Year - Model.Patients.Date_Of_Birth.Value.Year);
+        if (Model.Patients.Date_Of_Birth.Value > DateTime.Now.AddYears(-age))
+        {
+            age--;
+        }
+    }
+}
+<link rel="stylesheet" href="~/myContent/assets/css/styles1.css">
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-container {
+        margin-top: 20px;
+    }
+
+
+    .card {
+        padding: 1em;
+    }
+
+    button.btn.btn-success {
+        margin: 0.5em;
+    }
+
+    body {
+        background-color: #69acc759;
+    }
+
+    .container-fluid {
+        padding-top: 120px !important;
+    }
+</style>
+
+
+<div class="card">
+    <div class="container">
+        <h1 class="text-center">Edit Patient Info</h1>
+        <!-- <div class="row form-container">
+          <div class="col-md-12"> -->
+        <form id="patient-form" action="/Admin/ManagePatientDetails" method="post">
+            @*<input type="hidden" value="@Model.Patients.Patient_ID" name="Patient_ID" />*@
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="patient-id">Patient ID</label>
+                    <input type="text" class="form-control" id="patient-id" name="Patient_ID" disabled value="@Model.Patients.Patient_ID">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group ">
+                    <label for="full-name">Full Name</label>
+                    <input type="text" class="form-control" id="full-name" name="Full_Name" disabled value="@Model.Patients.Full_Name" required>
+                </div>
+                <div class="form-group ">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" class="form-control" id="dob" name="Date_Of_Birth" disabled value="@(Model.Patients.Date_Of_Birth.HasValue ? Model.Patients.Date_Of_Birth.Value.ToString("yyyy-MM-dd") : "")" required>
+                    <span>@(Model.Patients.Date_Of_Birth.HasValue ? $"(Age: {age})" : "")</span>
+                </div>
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="gender">Gender</label>
+                    <select class="form-select" id="gender" name="Gender" disabled required>
+                        <option value="Male" @(Model.Patients.Gender == "Male" ? "selected" : "")>Male</option>
+                        <option value="Female" @(Model.Patients.Gender == "Female" ? "selected" : "")>Female</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="marital-status">Marital Status</label>
+                    <select class="form-select" id="marital-status" name="Marital_Status" disabled required>
+                        <option value="Single" @(Model.Patients.Marital_Status == "Single" ? "selected" : "")>Single</option>
+                        <option value="Married" @(Model.Patients.Marital_Status == "Married" ? "selected" : "")>Married</option>
+                        <option value="Divorced" @(Model.Patients.Marital_Status == "Divorced" ? "selected" : "")>Divorced</option>
+                        <option value="Widowed" @(Model.Patients.Marital_Status == "Widowed" ? "selected" : "")>Widowed</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                    <label for="nationality">Nationality</label>
+                    <input type="text" class="form-control" id="nationality" name="Nationality" disabled value="@Model.Patients.Nationality">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="phone-number">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone-number" name="Phone_Number" disabled value="@Model.Patients.Phone_Number" required>
+                </div>
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group">
+                    <label for="home-address">Home Address</label>
+                    <input type="text" class="form-control" id="home-address" name="Home_Address" disabled value="@Model.Patients.Home_Address" required>
+                </div>
+            </div>
+            <div class="form-row mb-3">
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <textarea class="form-control" id="note" name="Note" rows="4" disabled>@Model.Patients.Note</textarea>
+                </div>
+            </div>
+            @*<div class="form-buttons text-center">
+                <button type="button" class="btn btn-outline-warning m-1" id="edit-button">Edit</button>
+                <a href="@Url.Action("ManagePatientDetails", "Admin", new { patientID = Model.Patients.Patient_ID })">
+                    <button type="button" class="btn btn-outline-warning m-1" id="cancel-button" style="display: none;">Cancel</button>
+                </a>
+                <button type="submit" class="btn btn-outline-success m-1" id="save-button" style="display: none;">Save</button>
+                <a href="@Url.Action("AddPatientTests", "Admin")">
+                    <button type="button" class="btn btn-outline-primary m-1" id="edit-button">New Test Order</button>
+                </a>
+            </div>*@
+        </form>
+        <!-- </div>
+        </div> -->
+        <div class="table-container">
+            <h2 class="text-center">Test Orders</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Test Order ID</th>
+                        <th scope="col">Test Name</th>
+                        <th scope="col">Test Date</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var patient in Model.TestOrders)
+                    {
+                        if (patient.Status == "Completed")
+                        {
+                        <tr>
+                            <td>@patient.Patient_ID</td>
+                            <td>@patient.Patient.Full_Name</td>
+                            <td>@patient.Date</td>
+                            <td><a href="@Url.Action("DownloadPdf", "Patients", new { OrderID = patient.Order_ID })" target="_blank"><button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">Download Results As PDF</button></a></td>
+                        </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('edit-button').addEventListener('click', function () {
+        // Enable all form fields
+        document.querySelectorAll('#patient-form input, #patient-form select, #patient-form textarea').forEach(function (element) {
+            element.disabled = false;
+        });
+
+        // Hide the edit button and show the save button
+        document.getElementById('edit-button').style.display = 'none';
+        document.getElementById('save-button').style.display = 'inline-block';
+        document.getElementById('cancel-button').style.display = 'inline-block';
+    });
+</script>
+

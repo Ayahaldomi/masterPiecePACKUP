@@ -129,3 +129,13 @@ C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\S
 C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\System.Text.Json.xml
 C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\System.Threading.Tasks.Extensions.xml
 C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\System.ValueTuple.xml
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MailKit.dll
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MimeKit.dll
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\System.Formats.Asn1.dll
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MailKit.pdb
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MailKit.xml
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MailKit.dll.config
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MimeKit.pdb
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MimeKit.xml
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\MimeKit.dll.config
+C:\Users\Orange\Desktop\masterPieceGit\masterPiece\MasterPiece\MasterPiece\bin\System.Formats.Asn1.xml

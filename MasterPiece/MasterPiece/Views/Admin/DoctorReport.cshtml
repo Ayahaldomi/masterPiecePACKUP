@@ -1,9 +1,8 @@
-﻿
+﻿@model IEnumerable<MasterPiece.Models.Test_Order>
 @{
     ViewBag.Title = "DoctorReport";
     Layout = "~/Views/Shared/_LayoutDoctor.cshtml";
 }
-
 
 <style>
     .container {
@@ -13,11 +12,6 @@
     .form-container, .table-container {
         margin-top: 20px;
     }
-
-    .custom-width {
-        width: 50% !important;
-    }
-
 
     .card {
         padding: 1em;
@@ -34,53 +28,176 @@
     .container-fluid {
         padding-top: 120px !important;
     }
+
+    .btn-group {
+        margin-bottom: 15px;
+    }
+
+    .pagination {
+        margin-top: 15px;
+        justify-content: center;
+    }
 </style>
 
 <div class="card">
     <div class="container">
         <h1 class="text-center">Test Results</h1>
-        <div class="row ">
+
+        <!-- Search bar -->
+        <div class="row">
             <div class="col-md-12">
                 <form class="col-md-6 offset-md-3">
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Search by Patient ID, Name or Test Order ID" aria-label="Search" id="search-input">
-                        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                        <button class="btn btn-primary" type="button" id="search-button" onclick="filterTable()">Search</button>
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Status filter buttons -->
+        <div class="d-flex justify-content-center">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" onclick="filterByStatus('All')">All</button>
+                <button class="btn btn-outline-primary" onclick="filterByStatus('Pending')">Pending</button>
+                <button class="btn btn-outline-primary" onclick="filterByStatus('Completed')">Completed</button>
+            </div>
+        </div>
+
+        <!-- Test Orders Table -->
         <div class="table-container">
-            <h2 class="text-center">Test Orders</h2>
-            <table class="table table-striped">
+            <table class="table table-striped" id="test-orders-table">
                 <thead>
                     <tr>
-                        <th scope="col">Test ID</th>
+                        <th scope="col">Test Order ID</th>
                         <th scope="col">Patient Name</th>
                         <th scope="col">Test Name</th>
                         <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>John Doe</td>
-                        <td>CBC, TSH</td>
-                        <td>Pending</td>
-                        <td><a href="addTestResult.html"><button class="btn btn-primary btn-sm">Add Result</button></a></td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>Jane Smith</td>
-                        <td>urine Analysis</td>
-                        <td>Completed</td>
-                        <td><a href="@Url.Action("DoctorReportAdd", "Admin")" <button class="btn btn-primary btn-sm">Add Result</button></td>
-                    </tr>
-                    <!-- More rows as needed -->
+                <tbody id="test-orders-body">
+                    @foreach (var order in Model)
+                    {
+                        <tr data-status="@foreach(var test in order.Test_Order_Tests)
+                                        {
+                                            if(test.Test.Test_Name == "Doctor Report")
+                                            {
+                                                @test.Status
+                                            }
+                                        }">
+                            <td>@order.Order_ID</td>
+                            <td>@order.Patient.Full_Name</td>
+                            <td>
+                                @foreach (var test in order.Test_Order_Tests)
+                                {
+                                    <span>@test.Test.Test_Name, </span>
+                                }
+                            </td>
+                            <td>
+                                @foreach(var test in order.Test_Order_Tests)
+                                {
+                                    if(test.Test.Test_Name == "Doctor Report")
+                                    {
+                                        @test.Status
+                                    }
+                                }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("DoctorReportAdd", "Admin", new { orderID = order.Order_ID })">
+                                    <button class="btn btn-primary btn-sm">Add Result</button>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination controls -->
+        <nav>
+            <ul class="pagination" id="pagination">
+                <!-- Pagination buttons will be dynamically added here -->
+            </ul>
+        </nav>
     </div>
 </div>
 
+<script>
+    // Pagination variables
+    let currentPage = 1;
+    const rowsPerPage = 5;
 
+    // Function to filter by status
+    function filterByStatus(status) {
+        const rows = document.querySelectorAll('#test-orders-table tbody tr');
+        rows.forEach(row => {
+            if (status === 'All' || row.getAttribute('data-status') === status) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        paginateTable(); // Reset pagination after filtering
+    }
+
+    // Function to filter by search input
+    function filterTable() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const rows = document.querySelectorAll('#test-orders-table tbody tr');
+        rows.forEach(row => {
+            const orderId = row.cells[0].textContent.toLowerCase();
+            const patientName = row.cells[1].textContent.toLowerCase();
+            if (orderId.includes(searchTerm) || patientName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        paginateTable(); // Reset pagination after search
+    }
+
+    // Pagination logic
+    function paginateTable() {
+        const rows = document.querySelectorAll('#test-orders-table tbody tr');
+        const totalRows = Array.from(rows).filter(row => row.style.display !== 'none').length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        document.getElementById('pagination').innerHTML = ''; // Clear existing pagination
+
+        // Display only the rows for the current page
+        let visibleRowCount = 0;
+        rows.forEach((row, index) => {
+            if (row.style.display !== 'none') {
+                visibleRowCount++;
+                row.style.display = (visibleRowCount > (currentPage - 1) * rowsPerPage && visibleRowCount <= currentPage * rowsPerPage) ? '' : 'none';
+            }
+        });
+
+        // Create pagination buttons
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.classList.add('page-item');
+            if (i === currentPage) {
+                li.classList.add('active');
+            }
+            const a = document.createElement('a');
+            a.classList.add('page-link');
+            a.href = '#';
+            a.textContent = i;
+            a.onclick = (event) => {
+                event.preventDefault();
+                currentPage = i;
+                paginateTable();
+            };
+            li.appendChild(a);
+            document.getElementById('pagination').appendChild(li);
+        }
+    }
+
+    // Initialize pagination on page load
+    window.onload = function() {
+        paginateTable();
+    };
+
+</script>

@@ -1,0 +1,156 @@
+﻿
+@{
+    ViewBag.Title = "DoctorDashboard";
+    Layout = "~/Views/Shared/_LayoutDoctor.cshtml";
+}
+
+<style>
+
+
+    .services .service-item {
+        background-color: var(--surface-color);
+        padding: 40px;
+        box-shadow: 0px 0 30px rgba(0, 0, 0, 0.1);
+        height: 100%;
+    }
+
+        .services .service-item .icon {
+            width: 48px;
+            height: 48px;
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+            .services .service-item .icon i {
+                color: color-mix(in srgb, #37423b, transparent 30%);
+                font-size: 56px;
+                transition: ease-in-out 0.3s;
+                z-index: 2;
+                position: relative;
+            }
+
+            .services .service-item .icon:before {
+                position: absolute;
+                content: "";
+                height: 100%;
+                width: 100%;
+                background: color-mix(in srgb, #69acc7, transparent 95%);
+                border-radius: 50px;
+                z-index: 1;
+                top: 10px;
+                right: -20px;
+                transition: 0.3s;
+            }
+
+        .services .service-item h3 {
+            color: color-mix(in srgb, #37423b, transparent 20%);
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            padding-bottom: 8px;
+            font-size: 22px;
+            position: relative;
+            display: inline-block;
+            border-bottom: 4px solid color-mix(in srgb, #37423b, transparent 90%);
+            transition: 0.3s;
+        }
+
+        .services .service-item p {
+            line-height: 24px;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .services .service-item .readmore {
+            margin-top: 15px;
+            display: inline-block;
+            color: color-mix(in srgb, var(--default-color), transparent 30%);
+        }
+
+        .services .service-item:hover .icon i {
+            color: var(--heading-color);
+        }
+
+        .services .service-item:hover .icon:before {
+            background: color-mix(in srgb, #69acc7, transparent 50%);
+        }
+
+        .services .service-item:hover h3 {
+            border-color: color-mix(in srgb, #69acc7, transparent 10%);
+            color: var(#37423b);
+        }
+
+    ol, ul {
+        padding-left: 0rem;
+    }
+
+    .navbar-nav .dropdown-menu .dropdown-item {
+        border-radius: 8px;
+    }
+
+    .gap-2 {
+        gap: 0.5rem !important;
+    }
+
+    .fs-6 {
+        font-size: 1.25rem !important;
+    }
+
+    .fs-3 {
+        font-size: 0.875rem !important;
+    }
+
+    .mb-0 {
+        margin-bottom: 0 !important;
+    }
+</style>
+
+
+
+<div class="row">
+    <section id="services" class="services section">
+
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+
+            <div class="row gy-2">
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-item  position-relative">
+                        <div class="icon">
+                            <!-- <i class="fas fa-book"></i> -->
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <a href="@Url.Action("DoctorReport", "Admin")">
+                            <h3>Doctor Report</h3>
+                        </a>
+
+                    </div>
+                </div>
+                <!-- End Service Item -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-item position-relative">
+                        <div class="icon">
+                            <!-- <i class="fas fa-poll"></i> -->
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <a href="@Url.Action("Chat", "Chat")">
+                            <h3>Doctor Chat</h3>
+                        </a>
+
+                    </div>
+                </div>
+                <!-- End Service Item -->
+
+
+                
+            </div>
+
+        </div>
+
+    </section>
+</div>
+

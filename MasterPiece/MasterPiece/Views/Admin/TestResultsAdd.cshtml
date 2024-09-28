@@ -1,7 +1,20 @@
-﻿
+﻿@model MasterPiece.Models.Test_Order
+
 @{
     ViewBag.Title = "TestResultsAdd";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@{
+    int? age = null;
+
+    if (Model.Patient.Date_Of_Birth.HasValue)
+    {
+        var birthDate = Model.Patient.Date_Of_Birth.Value;
+        var today = DateTime.Today;
+        age = today.Year - birthDate.Year;
+        if (birthDate.Date > today.AddYears(-age.Value)) { age--; }
+    }
 }
 
 <style>
@@ -33,10 +46,10 @@
     .container-fluid {
         padding-top: 120px !important;
     }
+
     .card.p-4.shadow-md {
         background-color: #00000012;
     }
-
 </style>
 
 <div class="card">
@@ -48,67 +61,176 @@
                     <div class="row mt-4">
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="patientId" class="fw-bolder">Patient ID:</label>
-                            <p class="ms-2">8855</p>
+                            <p class="ms-2">@Model.Patient.Patient_ID</p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="fullName" class="fw-bolder">Full Name:</label>
-                            <p class="ms-2">Ayah Hasan</p>
+                            <p class="ms-2">@Model.Patient.Full_Name</p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="age" class="fw-bolder">Age:</label>
-                            <p class="ms-2">28</p>
+                            <p class="ms-2">
+                                @if (Model.Patient.Date_Of_Birth.HasValue)
+                                {
+                                    <span>@Model.Patient.Date_Of_Birth.Value.ToString("dd/MM/yyyy") (Age: @age)</span>
+                                }
+                                else
+                                {
+                                    <span>Date of Birth: N/A</span>
+                                }
+                            </p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="gender" class="fw-bolder">Gender:</label>
-                            <p class="ms-2">Female</p>
+                            <p class="ms-2">@Model.Patient.Gender</p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="testOrder" class="fw-bolder">Test Order:</label>
-                            <p class="ms-2">5518</p>
+                            <p class="ms-2">@Model.Order_ID</p>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-flex-start">
+                            <label for="testOrder" class="fw-bolder">Test Order Status: @Model.Status</label>
+                            <a href="@Url.Action("Status", "Admin", new {OrderID = Model.Order_ID})">
+
+                                <button id="mark-completed-button" type="button" class="btn btn-success">Mark as Completed</button>
+                            </a>
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <div class="table-container">
+        </div>
+        <div class="table-container">
+            <form id="testResultsForm" action="/Admin/SaveTestResults" method="post">
+                <input type="hidden" value="@Model.Order_ID" name="Order_ID" />
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">Test Name</th>
                             <th scope="col">Result</th>
+                            <th scope="col">Unit</th>
                             <th scope="col">Normal Range</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>CBC</td>
-                            <td><input type="text" class="form-control" placeholder="Enter result"></td>
-                            <td>4.5-11 x10^9/L</td>
-                        </tr>
-                        <tr>
-                            <td>TSH</td>
-                            <td><input type="text" class="form-control" placeholder="Enter result"></td>
-                            <td>0.4-4.0 mU/L</td>
-                        </tr>
-                        <!-- More rows as needed -->
+                        @* Declare and initialize an index variable *@
+                        @{
+                            var index = 0;
+                        }
+
+                        @* Use a foreach loop to iterate over the ICollection *@
+                        @foreach (var test in Model.Test_Order_Tests)
+                        {
+                            <tr>
+                                <td>@test.Test.Test_Name</td>
+                                <td>
+                                    @if (test.Test.Test_Name == "Doctor Report")
+                                    {
+                                        <!-- Use the index in the name attribute to bind data to the collection -->
+                                        <input type="hidden" name="Test_Order_Tests[@index].ID" value="@test.ID" />
+                                        <textarea id="paragraphText" name="Test_Order_Tests[@index].Result" rows="5" class="form-control" placeholder="Type your paragraph here..." readonly>@test.Result</textarea>
+                                        <button type="button" class="btn btn-outline-primary">Notify Doctor</button>
+
+                                    }
+                                    else
+                                    {
+                                        <!-- Use the index in the name attribute to bind data to the collection -->
+                                        <input type="hidden" name="Test_Order_Tests[@index].ID" value="@test.ID" />
+                                        <input type="text" class="form-control" name="Test_Order_Tests[@index].Result" value="@test.Result" placeholder="Enter result">
+
+                                    }
+
+                                </td>
+                                <td>@test.Test.Unit</td>
+                                <td>@test.Test.Normal_Range</td>
+                            </tr>
+
+                            @* Increment the index for the next iteration *@
+                            index++;
+                        }
                     </tbody>
                 </table>
-            </div>
+                <div class="text-center mt-4">
+                    <button id="save-button" type="submit" class="btn btn-primary">Save</button>
+                    <button id="print-button" type="button" class="btn btn-secondary" >Print</button>
 
-            <div class="text-center mt-4">
-                <button id="save-button" class="btn btn-primary">Save</button>
-                <button id="print-button" class="btn btn-secondary" disabled>Print</button>
-            </div>
+                </div>
+            </form>
         </div>
-
 
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    document.getElementById('save-button').addEventListener('click', function() {
-      // Add save functionality here
-      document.getElementById('print-button').disabled = false;
+    document.getElementById('print-button').addEventListener('click', function () {
+        let allTestsCompleted = true;
+        let isPaymentSufficient = true;
+
+        // Get the status of all test orders
+        @* Assuming Model.Total_Price and Model.Amount_Paid are accessible *@
+        var totalAmount = parseFloat('@Model.Total_Price');
+        var paidAmount = parseFloat('@Model.Amount_Paid');
+        var discountPercentage = @Model.Discount_Persent;
+        let orderStatus = '@Model.Status';  // Get the overall order status
+
+
+        if (paidAmount < (totalAmount - (totalAmount * (discountPercentage / 100)))) {
+            isPaymentSufficient = false;
+        }
+
+        @foreach (var test in Model.Test_Order_Tests)
+        {
+            <text>
+                if ('@test.Status' !== 'Completed') {
+                    allTestsCompleted = false;
+                }
+            </text>;
+        }
+        // Check if the overall order status is not "Completed"
+        if (orderStatus !== 'Completed') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Order Not Completed',
+                text: 'The test order is not marked as completed. Complete the order before printing.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if (!allTestsCompleted) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Incomplete Tests',
+                text: 'All tests must be marked as completed before printing.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if (!isPaymentSufficient) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Insufficient Payment',
+                text: 'The total payment is insufficient. Please complete the payment before printing.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        // If both conditions are satisfied, enable the print button
+        else {
+            Swal.fire({
+            icon: 'success',
+            title: 'Validation Passed',
+            text: 'All tests are completed and payment is sufficient. You can now print.',
+            confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Open the URL in a new tab (_blank)
+                    window.open('@Url.Action("DownloadPdf", "Patients", new { OrderID = @Model.Order_ID })', '_blank');
+                }
+            });
+        }
     });
 </script>

@@ -127,6 +127,7 @@
     <NavigationProperty Name="ChatRooms" Relationship="Self.FK__ChatRooms__Patie__5812160E" FromRole="Patients" ToRole="ChatRooms" />
     <NavigationProperty Name="Feedbacks" Relationship="Self.FK__Feedback__Patien__5441852A" FromRole="Patients" ToRole="Feedback" />
     <NavigationProperty Name="Test_Order" Relationship="Self.FK__Test_Orde__Patie__4AB81AF0" FromRole="Patients" ToRole="Test_Order" />
+    <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="Test_Order">
     <Key>

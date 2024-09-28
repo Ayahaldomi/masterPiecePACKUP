@@ -37,6 +37,7 @@ namespace MasterPiece.Controllers
             return View();
         }
 
+        /////////////////////////////////////////////////// Contact ///////////////////////////////////////////////////
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
@@ -44,6 +45,19 @@ namespace MasterPiece.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult contactPost(Contact contact)
+        {
+            contact.sent_date = DateTime.Now;
+            contact.status = 0;
+            db.Contacts.Add(contact);
+            db.SaveChanges();
+            TempData["confirm"] = "Your Message Was Sent Successfully";
+            return View("Contact");
+        }
+
+
+        ///////////////////////////////////////////////// Packages ////////////////////////////////////////////////
         public ActionResult Service()
         {
             var home = new HomeViewModel
@@ -109,23 +123,61 @@ namespace MasterPiece.Controllers
             {
                 return View("Error");
             }
+            // Payment is successful, retrieve the appointment data from session
+            var appointmentData = Session["AppointmentData"] as AppointmentPOST;
 
-            // Update the patient's payment status to "Paid"
-            //var patient = db.Patients.Find(patientId);
-            //patient.PaymentStatus = "Paid";
-            //db.SaveChanges();
 
-            //// After successful payment, redirect to the chat room
-            //var chatRoomId = db.ChatRooms.FirstOrDefault(cr => cr.Patient_ID == patientId)?.ChatRoom_ID;
-            //if (chatRoomId.HasValue)
-            //{
-            //    return RedirectToAction("Chat2", "Chat", new { chatRoomId = chatRoomId.Value });
-            //}
+            // Store the appointment data in TempData for the next action
+            TempData["AppointmentData"] = appointmentData;
 
-            //return RedirectToAction("Index", "Home");
+            // Proceed with creating the appointment
+            return RedirectToAction("CreateAppointmentAfterPayment");
+        
+        }
 
-            // Return a view that will close the tab
-            return View("CloseTab");
+        
+        public ActionResult CreateAppointmentAfterPayment()
+        {
+            // Retrieve the appointment data from TempData
+            var appointment = TempData["AppointmentData"] as AppointmentPOST;
+            // Save appointment information (same as before)
+            var app = new Appointment
+            {
+                Full_Name = appointment.Full_Name,
+                Gender = appointment.Gender,
+                Date_Of_Birth = appointment.Date_Of_Birth,
+                Email_Address = appointment.Email_Address,
+                Phone_Number = appointment.Phone_Number,
+                Home_Address = appointment.Home_Address,
+                Date_Of_Appo = appointment.Date_Of_Appo,
+                Total_price = appointment.Total_price,
+                Amount_paid = appointment.Amount_paid,
+                Billing_ID = 2656,
+                Status = "Pending" // Example status
+            };
+            db.Appointments.Add(app);
+            db.SaveChanges();
+
+            // Save selected tests
+            foreach (var selectedTest in appointment.SelectedTests)
+            {
+                var appointmentTest = new Appointments_Tests
+                {
+                    Appointment_ID = app.ID, // Use the saved appointment ID
+                    Test_ID = selectedTest.Test_ID
+                };
+
+                db.Appointments_Tests.Add(appointmentTest);
+            }
+
+            db.SaveChanges();
+
+            // Clear the appointment data from the session
+            Session.Remove("AppointmentData");
+
+            TempData["confirmForm"] = appointment.Full_Name;
+
+            return RedirectToAction("Appointment");
         }
 
         public ActionResult CloseTab() { return View(); }
@@ -135,6 +187,15 @@ namespace MasterPiece.Controllers
         {
             // Handle canceled payment logic here
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public ActionResult StoreAppointmentData(AppointmentPOST appointment)
+        {
+            // Temporarily store the appointment data in the session (or you can use a database)
+            Session["AppointmentData"] = appointment;
+
+            return Json(new { success = true });
         }
 
 
@@ -174,7 +235,9 @@ namespace MasterPiece.Controllers
 
             db.SaveChanges();
 
-            return RedirectToAction("Index");
+            TempData["confirmForm"] = appointment.Full_Name;
+
+            return RedirectToAction("Appointment");
         }
 
         [HttpGet]
@@ -199,12 +262,34 @@ namespace MasterPiece.Controllers
 
             return Json(bookedTimes, JsonRequestBehavior.AllowGet);
         }
-
+        //////////////////////////////////////////////////  Employee Portal  //////////////////////////////////////////////////////
         public ActionResult EmployeePortal()
         {
             ViewBag.Message = "Your contact page.";
 
             return View();
         }
+
+        [HttpPost]
+        public ActionResult EmployeePortal(string Email, string Password)
+        {
+            var employee = db.Lab_Tech.Where(e => e.Email == Email && e.Password == Password).FirstOrDefault();
+            if (employee == null) {
+                TempData["LoginError"] = "Invalid login credentials.";
+                return RedirectToAction("EmployeePortal");
+            }
+            if (employee.Status == "Doctor") {
+                Session["Employee"] = employee;
+                return RedirectToAction("DoctorDashboard", "Admin");
+            }
+            else
+            {
+                Session["Employee"] = employee;
+                return RedirectToAction("AdminDashboard", "Admin");
+            }
+            
+
+        }
+
     }
 }

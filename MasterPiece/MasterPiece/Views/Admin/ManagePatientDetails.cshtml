@@ -138,15 +138,18 @@
                 <tbody>
                     @foreach (var patient in Model.TestOrders)
                     {
-                        <tr>
-                            <td>@patient.Patient_ID</td>
-                            <td>@patient.Patient.Full_Name</td>
-                            <td>@patient.Date</td>
-                            <td><a href="@Url.Action("DownloadPdf", "Patients", new {OrderID = patient.Order_ID})" target="_blank"><button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-secondary">Download Results As PDF</button></a></td>
-                        </tr>
-                            }
-                       
-                    </tbody>
+                        if (patient.Status == "Completed")
+                        {
+                            <tr>
+                                <td>@patient.Patient_ID</td>
+                                <td>@patient.Patient.Full_Name</td>
+                                <td>@patient.Date</td>
+                                <td><a href="@Url.Action("DownloadPdf", "Patients", new { OrderID = patient.Order_ID })" target="_blank"><button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">Download Results As PDF</button></a></td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
                 </table>
         </div>
     </div>

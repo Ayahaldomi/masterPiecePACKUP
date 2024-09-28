@@ -69,14 +69,21 @@
                             <span class="hide-menu">Home</span>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="@Url.Action("AdminDashboard", "Admin")" aria-expanded="false">
+                            <a class="sidebar-link" href="@Url.Action("DoctorDashboard", "Admin")" aria-expanded="false">
                                 <span>
                                     <i class="ti ti-layout-dashboard"></i>
                                 </span>
                                 <span class="hide-menu">Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        @{
+                            var controller = ViewContext.RouteData.Values["controller"].ToString();
+                            var action = ViewContext.RouteData.Values["action"].ToString();
+
+                            var isChatActive = ((controller == "Chat" && action == "Chat") || (controller == "Admin" && action == "patientDoctor"));
+                            var isReportActive = ((controller == "Admin" && action == "DoctorReport") || (controller == "Admin" && action == "DoctorReportAdd"));
+                        }
+                        <li class="sidebar-item @(isReportActive ? "active selected" : "")">
                             <a class="sidebar-link" href="@Url.Action("DoctorReport", "Admin")" aria-expanded="false">
                                 <span>
                                     <i class="fa-solid fa-hospital-user"></i>
@@ -84,70 +91,73 @@
                                 <span class="hide-menu">Doctor Report</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="@Url.Action("Chat", "Chat", new { chatRoomId = 1 })" aria-expanded="false">
+
+
+                        <li class="sidebar-item @(isChatActive ? "active selected" : "")">
+                            <a class="sidebar-link" href="@Url.Action("Chat", "Chat")" aria-expanded="false">
                                 <span>
                                     <i class="fa-solid fa-list-check"></i>
                                 </span>
                                 <span class="hide-menu">Patient Chat</span>
                             </a>
                         </li>
+
                         @*<li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("TestResults", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fa-solid fa-microscope"></i>
-                                    </span>
-                                    <span class="hide-menu">Test Results</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("InventoryManagement", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fa-solid fa-warehouse"></i>
-                                    </span>
-                                    <span class="hide-menu">Inventory Management</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("TestsDocumentation", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fa-solid fa-vials"></i>
-                                    </span>
-                                    <span class="hide-menu">Tests Documentation</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("Appointment", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fa-regular fa-calendar-check"></i>
-                                    </span>
-                                    <span class="hide-menu">Appointment</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("Employees", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fas fa-user "></i>
-                                    </span>
-                                    <span class="hide-menu">Employees</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("Packages", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fas fa-box "></i>
-                                    </span>
-                                    <span class="hide-menu">Packages</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a class="sidebar-link" href="@Url.Action("FeedBacks", "Admin")" aria-expanded="false">
-                                    <span>
-                                        <i class="fas fa-comment-dots "></i>
-                                    </span>
-                                    <span class="hide-menu">FeedBacks</span>
-                                </a>
-                            </li>*@
+            <a class="sidebar-link" href="@Url.Action("TestResults", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fa-solid fa-microscope"></i>
+                </span>
+                <span class="hide-menu">Test Results</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("InventoryManagement", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fa-solid fa-warehouse"></i>
+                </span>
+                <span class="hide-menu">Inventory Management</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("TestsDocumentation", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fa-solid fa-vials"></i>
+                </span>
+                <span class="hide-menu">Tests Documentation</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("Appointment", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fa-regular fa-calendar-check"></i>
+                </span>
+                <span class="hide-menu">Appointment</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("Employees", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fas fa-user "></i>
+                </span>
+                <span class="hide-menu">Employees</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("Packages", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fas fa-box "></i>
+                </span>
+                <span class="hide-menu">Packages</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("FeedBacks", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fas fa-comment-dots "></i>
+                </span>
+                <span class="hide-menu">FeedBacks</span>
+            </a>
+        </li>*@
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->

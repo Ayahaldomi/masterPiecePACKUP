@@ -375,6 +375,24 @@
         text-align: center;
         margin-bottom: 10px;
     }
+
+    /* Flexbox to align the radio button and label side-by-side */
+    .custom-radio {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Space between the radio button and the label */
+    }
+
+    /* Optional: adjust input size and label styling */
+    .form-check-input {
+        margin: 0;
+        transform: scale(1.2); /* Slightly enlarge the radio button if desired */
+    }
+
+    .form-check-label {
+        font-size: 16px;
+        color: #495057; /* Label color */
+    }
 </style>
 
 <style>
@@ -415,11 +433,11 @@
             cursor: pointer;
         }
 
-        /* Error Modal styling */
-#errorModal .modal-content {
-    background-color: #f44336; /* Red color for error */
-    color: white;
-}
+    /* Error Modal styling */
+    #errorModal .modal-content {
+        background-color: #f44336; /* Red color for error */
+        color: white;
+    }
 </style>
 
 @{
@@ -577,13 +595,13 @@
                 <div class="form_container">
                     <div class="form-group">
 
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="Amount_paid" id="cash" value="0" onclick="togglePaymentDetails(false)" checked>
+                        <div class="input_wrap custom-radio">
+                            <input class="form-check-input" type="radio" name="Amount_paid" id="cash" value="0" checked>
                             <label class="form-check-label" for="cash">Cash</label>
                         </div>
 
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="Amount_paid" id="paypal" value="0" onclick="togglePaymentDetails(true)">
+                        <div class="input_wrap custom-radio">
+                            <input class="form-check-input" type="radio" name="Amount_paid" id="paypal" value="0">
                             <label class="form-check-label" for="paypal">PayPal</label>
                         </div>
                     </div>
@@ -635,15 +653,26 @@
         <p id="errorMessage">Please fill in all required fields.</p>
     </div>
 </div>
+<!-- Contact End -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Check if there's a login error message from the server
+window.onload = function () {
+    @if (TempData["confirmForm"] != null)
+    {
+        <text>
+        Swal.fire({
+        title: '@TempData["confirmForm"]',
+        text: 'Your appointment has been successfully submitted. You will receive a confirmation email shortly.',
+        icon: 'success'
+        });
+        </text>
+    }
+};
+</script>
 
 
-@*<div class="modal_wrapper">
-    <div class="shadow"></div>
-    <div class="success_wrap">
-        <span class="modal_icon"><ion-icon name="checkmark-sharp"></ion-icon></span>
-        <p>You have successfully completed the process.</p>
-    </div>
-</div>*@
 
 <script>
     var form_1 = document.querySelector(".form_1");
@@ -932,24 +961,6 @@
         updateTotalPrice();
     }
 
-    //// Function to remove a test from the table
-    //function removeTestFromTable(row, testId) {
-    //    let tableBody = document.getElementById("testTableBody");
-    //    tableBody.removeChild(row); // Remove the row from the table
-
-    //    // Remove the hidden input for the test
-    //    let selectedTestsDiv = document.getElementById("selectedTestsInputs");
-    //    let hiddenInputs = selectedTestsDiv.getElementsByTagName("input");
-    //    for (let i = 0; i < hiddenInputs.length; i++) {
-    //        if (hiddenInputs[i].value == testId) {
-    //            selectedTestsDiv.removeChild(hiddenInputs[i]);
-    //            break;
-    //        }
-    //    }
-
-    //    // Update the total price after removal
-    //    updateTotalPrice();
-    //}
 
     function removeTestFromTable(row, testId) {
         let tableBody = document.getElementById("testTableBody");
@@ -991,16 +1002,7 @@
         selectedTestsCounter = hiddenInputs.length;
     }
 
-    // Function to handle payment details toggle
-    function togglePaymentDetails(isPayPal) {
-        const paypalDetails = document.getElementById("paypalDetails");
 
-        if (isPayPal) {
-            paypalDetails.style.display = "block"; // Show PayPal details if PayPal is selected
-        } else {
-            paypalDetails.style.display = "none";  // Hide PayPal details if Cash is selected
-        }
-    }
 
     // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
@@ -1030,41 +1032,119 @@
 
 
 
-    // Handle PayPal button click
-    document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent form submission for appointment
+    //// Handle PayPal button click
+    //document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
+    //    event.preventDefault(); // Prevent form submission for appointment
 
-        // Correctly target the PayPal form
-        let paypalForm = document.querySelector('.paypalForm');
-        if (paypalForm) {
-            paypalForm.submit(); // Submit PayPal form separately
-        } else {
-            console.error('PayPal form not found');
-        }
-    });
+    //    // Correctly target the PayPal form
+    //    let paypalForm = document.querySelector('.paypalForm');
+    //    if (paypalForm) {
+    //        paypalForm.submit(); // Submit PayPal form separately
+    //    } else {
+    //        console.error('PayPal form not found');
+    //    }
+    //});
 
 
     document.getElementById('appointmentForm').addEventListener('submit', function (event) {
         // Get the selected date
+        event.preventDefault(); // Prevent the default form submission
+
+        // Check if PayPal is selected
+        const isPayPalSelected = document.getElementById('paypal').checked;
+
+        if (isPayPalSelected) {
+            // Temporarily store the appointment data using AJAX before PayPal payment
+            storeAppointmentData();
+        } else {
+            const appointmentForm = document.getElementById('appointmentForm');
+
+            // Set the combined date and time before submitting the form
+            const selectedDate = document.getElementById('preferred_date').value;
+            const selectedTime = document.getElementById('time_value').innerText;
+            const combinedDateTime = selectedDate + "T" + selectedTime;
+
+            document.getElementById('dateOfAppointment').value = combinedDateTime;
+
+            // Set the total price in the hidden input
+            document.getElementById('Total_price').value = document.getElementById('totalPrice').textContent.replace('$', '');
+
+            // Submit the form
+            appointmentForm.submit();
+        }
+    });
+    function storeAppointmentData() {
+        // First, ensure the date and time are combined and set in the hidden input
         const selectedDate = document.getElementById('preferred_date').value;
+        const selectedTime = document.getElementById('time_value').innerText;
 
-        // Get the selected time
-        const selectedTime = document.getElementById('time_value').innerText; // Should be in "HH:MM" format
+        if (!selectedDate || !selectedTime) {
+            alert("Please select a valid date and time.");
+            return;
+        }
 
-        // Combine the date and time into a single DateTime string
+        // Combine the selected date and time into a single datetime string
         const combinedDateTime = selectedDate + "T" + selectedTime;
-
-        // Set the combined DateTime value in the hidden input
         document.getElementById('dateOfAppointment').value = combinedDateTime;
 
-        // Update the hidden total price input before form submission
+        const formData = new FormData(document.getElementById('appointmentForm'));
+
+        // Send the form data to a temporary storage action (via AJAX)
+        fetch('/Home/StoreAppointmentData', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // After storing, open PayPal modal for payment confirmation
+                    openPayPalModal();
+                } else {
+                    console.error('Failed to store appointment data.');
+                }
+            })
+            .catch(error => console.error('Error storing appointment data:', error));
+    }
+    // Function to open the PayPal modal
+    function openPayPalModal() {
+        var modal = document.getElementById("paypalModal");
+        modal.style.display = "block"; // Show the PayPal modal
+    }
+
+    // Function to finalize and submit the appointment form
+    function finalizeFormSubmission() {
+        const appointmentForm = document.getElementById('appointmentForm');
+
+        // Set the combined date and time before submitting the form
+        const selectedDate = document.getElementById('preferred_date').value;
+        const selectedTime = document.getElementById('time_value').innerText;
+        const combinedDateTime = selectedDate + "T" + selectedTime;
+
+        document.getElementById('dateOfAppointment').value = combinedDateTime;
+
+        // Set the total price in the hidden input
         document.getElementById('Total_price').value = document.getElementById('totalPrice').textContent.replace('$', '');
 
-        console.log("Submitting Total Price:", document.getElementById('Total_price').value); // Debugging log
+        // Submit the form
+        appointmentForm.submit();
+    }
 
-        // Perform validation before submission
-        if (!validateForm()) {
-            event.preventDefault(); // Prevent form submission if validation fails
+    // Get the confirm and pay button in the PayPal modal
+    document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent default button behavior
+
+        // Trigger PayPal form submission
+        let paypalForm = document.querySelector('.paypalForm');
+        if (paypalForm) {
+            paypalForm.submit(); // Submit the PayPal form
+
+            // Close the PayPal modal
+            document.getElementById("paypalModal").style.display = "none";
+
+            //// After PayPal payment, submit the main form
+            //finalizeFormSubmission();
+        } else {
+            console.error('PayPal form not found');
         }
     });
 
@@ -1133,9 +1213,9 @@
     var span = document.getElementsByClassName("close")[0];
 
     // When the user clicks the PayPal radio button, open the modal
-    paypalRadio.onclick = function () {
-        modal.style.display = "block";
-    }
+    //paypalRadio.onclick = function () {
+    //    modal.style.display = "block";
+    //}
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -1149,20 +1229,20 @@
         }
     }
 
-    // Handle PayPal form submission inside the modal
-    document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent the form submission if you want to handle further logic
+    //// Handle PayPal form submission inside the modal
+    //document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
+    //    event.preventDefault(); // Prevent the form submission if you want to handle further logic
 
-        let paypalForm = document.querySelector('.paypalForm');
-        if (paypalForm) {
-            paypalForm.submit(); // Submit PayPal form separately
-        } else {
-            console.error('PayPal form not found');
-        }
+    //    let paypalForm = document.querySelector('.paypalForm');
+    //    if (paypalForm) {
+    //        paypalForm.submit(); // Submit PayPal form separately
+    //    } else {
+    //        console.error('PayPal form not found');
+    //    }
 
-        // Close the modal after submission
-        modal.style.display = "none";
-    });
+    //    // Close the modal after submission
+    //    modal.style.display = "none";
+    //});
 </script>
 
 

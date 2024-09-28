@@ -112,6 +112,7 @@
     <Property Name="Home_Address" Type="nvarchar(max)" />
     <Property Name="Note" Type="nvarchar(max)" />
     <Property Name="PaymentStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="Email" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="Test_Order">
     <Key>

@@ -1,7 +1,19 @@
-﻿
+﻿@model MasterPiece.Models.Test_Order
+
 @{
     ViewBag.Title = "DoctorReportAdd";
     Layout = "~/Views/Shared/_LayoutDoctor.cshtml";
+}
+@{
+    int? age = null;
+
+    if (Model.Patient.Date_Of_Birth.HasValue)
+    {
+        var birthDate = Model.Patient.Date_Of_Birth.Value;
+        var today = DateTime.Today;
+        age = today.Year - birthDate.Year;
+        if (birthDate.Date > today.AddYears(-age.Value)) { age--; }
+    }
 }
 
 
@@ -50,58 +62,78 @@
                     <div class="row mt-4">
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="patientId" class="fw-bolder">Patient ID:</label>
-                            <p class="ms-2">8855</p>
+                            <p class="ms-2">@Model.Patient.Patient_ID</p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="fullName" class="fw-bolder">Full Name:</label>
-                            <p class="ms-2">Ayah Hasan</p>
+                            <p class="ms-2">@Model.Patient.Full_Name</p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="age" class="fw-bolder">Age:</label>
-                            <p class="ms-2">28</p>
+                            <p class="ms-2">
+                                @if (Model.Patient.Date_Of_Birth.HasValue)
+                                {
+                                    <span>@Model.Patient.Date_Of_Birth.Value.ToString("dd/MM/yyyy") (Age: @age)</span>
+                                }
+                                else
+                                {
+                                    <span>Date of Birth: N/A</span>
+                                }
+                            </p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="gender" class="fw-bolder">Gender:</label>
-                            <p class="ms-2">Female</p>
+                            <p class="ms-2">@Model.Patient.Gender</p>
                         </div>
                         <div class="col-md-6 d-flex justify-content-flex-start">
                             <label for="testOrder" class="fw-bolder">Test Order:</label>
-                            <p class="ms-2">5518</p>
+                            <p class="ms-2">@Model.Order_ID</p>
                         </div>
                     </div>
                 </div>
 
             </div>
-
+            
             <div class="table-container">
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">Test Name</th>
                             <th scope="col">Result</th>
+                            <th scope="col">Unit</th>
                             <th scope="col">Normal Range</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Ferritin</td>
-                            <td>74</td>
-                            <td><pre>Male: 30 to 400 nanograms per milliliter (ng/mL)
-Female: 13 to 150 ng/mL.</pre></td>
-                        </tr>
-                        <tr>
-                            <td>TSH</td>
-                            <td>2.6</td>
-                            <td><pre>0.4-4.0 mU/L</pre></td>
-                        </tr>
-                        <!-- More rows as needed -->
+                        @foreach (var test in Model.Test_Order_Tests)
+                        {
+                            if (test.Test.Test_Name != "Doctor Report")
+                            {
+                                <tr>
+                                    <td>@test.Test.Test_Name</td>
+                                    <td>@test.Result</td>
+                                    <td>@test.Test.Unit</td>
+                                    <td>
+                                        <pre>@test.Test.Normal_Range</pre>
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
-            <form method="post" action="/YourController/SaveParagraph" class="container mt-4">
+            <form method="post" action="/Admin/saveDoctorReport" class="container mt-4">
                 <div class="form-group">
+                    <input type="hidden" name="orderID" value="@Model.Order_ID" />
                     <label for="paragraphText" class="form-label">Enter Your Paragraph</label>
-                    <textarea id="paragraphText" name="ParagraphText" rows="10" class="form-control" placeholder="Type your paragraph here..."></textarea>
+                    @foreach (var test in Model.Test_Order_Tests)
+                    {
+                        if (test.Test.Test_Name == "Doctor Report")
+                        {
+                            <textarea id="paragraphText" name="DoctorReport" rows="10" class="form-control" placeholder="Type your paragraph here..." >@test.Result</textarea>
+
+                        }
+                    }
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Submit</button>
             </form>
@@ -115,9 +147,9 @@ Female: 13 to 150 ng/mL.</pre></td>
 </div>
 
 <script>
-    document.getElementById('save-button').addEventListener('click', function() {
-      // Add save functionality here
-      document.getElementById('print-button').disabled = false;
+    document.getElementById('save-button').addEventListener('click', function () {
+        // Add save functionality here
+        document.getElementById('print-button').disabled = false;
     });
 </script>
 
