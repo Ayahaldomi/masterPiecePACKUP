@@ -21,6 +21,7 @@
           <Property Name="Amount_paid" Type="decimal" Precision="10" Scale="2" />
           <Property Name="Billing_ID" Type="int" />
           <Property Name="Status" Type="nvarchar(max)" />
+          <Property Name="Patient_ID" Type="int" />
         </EntityType>
         <EntityType Name="Appointments_Tests">
           <Key>
@@ -83,6 +84,16 @@
           <Property Name="Email" Type="nvarchar(max)" />
           <Property Name="Password" Type="nvarchar(max)" />
           <Property Name="Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="Notification_ID" />
+          </Key>
+          <Property Name="Notification_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Doctor_ID" Type="int" />
+          <Property Name="Order_ID" Type="int" />
+          <Property Name="Notification_Date" Type="datetime" />
+          <Property Name="IsRead" Type="bit" />
         </EntityType>
         <EntityType Name="Package_Tests">
           <Key>
@@ -236,6 +247,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Notificat__Docto__1AD3FDA4">
+          <End Role="Lab_Tech" Type="Self.Lab_Tech" Multiplicity="0..1" />
+          <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lab_Tech">
+              <PropertyRef Name="Tech_ID" />
+            </Principal>
+            <Dependent Role="Notifications">
+              <PropertyRef Name="Doctor_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Notificat__Order__1BC821DD">
+          <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="0..1" />
+          <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Test_Order">
+              <PropertyRef Name="Order_ID" />
+            </Principal>
+            <Dependent Role="Notifications">
+              <PropertyRef Name="Order_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Package_T__Packa__440B1D61">
           <End Role="Packages" Type="Self.Packages" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -314,6 +349,7 @@
           <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lab_Tech" EntityType="Self.Lab_Tech" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Package_Tests" EntityType="Self.Package_Tests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Packages" EntityType="Self.Packages" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Patients" EntityType="Self.Patients" Schema="dbo" store:Type="Tables" />
@@ -343,6 +379,14 @@
           <AssociationSet Name="FK__Feedback__Patien__5441852A" Association="Self.FK__Feedback__Patien__5441852A">
             <End Role="Patients" EntitySet="Patients" />
             <End Role="Feedback" EntitySet="Feedback" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notificat__Docto__1AD3FDA4" Association="Self.FK__Notificat__Docto__1AD3FDA4">
+            <End Role="Lab_Tech" EntitySet="Lab_Tech" />
+            <End Role="Notifications" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notificat__Order__1BC821DD" Association="Self.FK__Notificat__Order__1BC821DD">
+            <End Role="Test_Order" EntitySet="Test_Order" />
+            <End Role="Notifications" EntitySet="Notifications" />
           </AssociationSet>
           <AssociationSet Name="FK__Package_T__Packa__440B1D61" Association="Self.FK__Package_T__Packa__440B1D61">
             <End Role="Packages" EntitySet="Packages" />
@@ -386,6 +430,7 @@
           <Property Name="Billing_ID" Type="Int32" />
           <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Appointments_Tests" Relationship="Self.FK__Appointme__Appoi__3E52440B" FromRole="Appointments" ToRole="Appointments_Tests" />
+          <Property Name="Patient_ID" Type="Int32" />
         </EntityType>
         <EntityType Name="Appointments_Tests">
           <Key>
@@ -456,6 +501,7 @@
           <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ChatRooms" Relationship="Self.FK__ChatRooms__LabTe__571DF1D5" FromRole="Lab_Tech" ToRole="ChatRooms" />
+          <NavigationProperty Name="Notifications" Relationship="MasterPieceModel.FK__Notificat__Docto__1AD3FDA4" FromRole="Lab_Tech" ToRole="Notification" />
         </EntityType>
         <EntityType Name="Package_Tests">
           <Key>
@@ -512,6 +558,7 @@
           <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Patient" Relationship="Self.FK__Test_Orde__Patie__4AB81AF0" FromRole="Test_Order" ToRole="Patients" />
           <NavigationProperty Name="Test_Order_Tests" Relationship="Self.FK__Test_Orde__Order__4D94879B" FromRole="Test_Order" ToRole="Test_Order_Tests" />
+          <NavigationProperty Name="Notifications" Relationship="MasterPieceModel.FK__Notificat__Order__1BC821DD" FromRole="Test_Order" ToRole="Notification" />
         </EntityType>
         <EntityType Name="Test_Order_Tests">
           <Key>
@@ -750,7 +797,52 @@
             <End Role="Tests" EntitySet="Tests" />
             <End Role="Test_Order_Tests" EntitySet="Test_Order_Tests" />
           </AssociationSet>
+          <EntitySet Name="Notifications" EntityType="MasterPieceModel.Notification" />
+          <AssociationSet Name="FK__Notificat__Docto__1AD3FDA4" Association="MasterPieceModel.FK__Notificat__Docto__1AD3FDA4">
+            <End Role="Lab_Tech" EntitySet="Lab_Tech" />
+            <End Role="Notification" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notificat__Order__1BC821DD" Association="MasterPieceModel.FK__Notificat__Order__1BC821DD">
+            <End Role="Test_Order" EntitySet="Test_Order" />
+            <End Role="Notification" EntitySet="Notifications" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Notification">
+          <Key>
+            <PropertyRef Name="Notification_ID" />
+          </Key>
+          <Property Name="Notification_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Doctor_ID" Type="Int32" />
+          <Property Name="Order_ID" Type="Int32" />
+          <Property Name="Notification_Date" Type="DateTime" Precision="3" />
+          <Property Name="IsRead" Type="Boolean" />
+          <NavigationProperty Name="Lab_Tech" Relationship="MasterPieceModel.FK__Notificat__Docto__1AD3FDA4" FromRole="Notification" ToRole="Lab_Tech" />
+          <NavigationProperty Name="Test_Order" Relationship="MasterPieceModel.FK__Notificat__Order__1BC821DD" FromRole="Notification" ToRole="Test_Order" />
+        </EntityType>
+        <Association Name="FK__Notificat__Docto__1AD3FDA4">
+          <End Type="MasterPieceModel.Lab_Tech" Role="Lab_Tech" Multiplicity="0..1" />
+          <End Type="MasterPieceModel.Notification" Role="Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lab_Tech">
+              <PropertyRef Name="Tech_ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="Doctor_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Notificat__Order__1BC821DD">
+          <End Type="MasterPieceModel.Test_Order" Role="Test_Order" Multiplicity="0..1" />
+          <End Type="MasterPieceModel.Notification" Role="Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Test_Order">
+              <PropertyRef Name="Order_ID" />
+            </Principal>
+            <Dependent Role="Notification">
+              <PropertyRef Name="Order_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -760,6 +852,7 @@
           <EntitySetMapping Name="Appointments">
             <EntityTypeMapping TypeName="MasterPieceModel.Appointment">
               <MappingFragment StoreEntitySet="Appointments">
+                <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
                 <ScalarProperty Name="Gender" ColumnName="Gender" />
@@ -922,6 +1015,17 @@
                 <ScalarProperty Name="Inventory" ColumnName="Inventory" />
                 <ScalarProperty Name="Sample_Type" ColumnName="Sample_Type" />
                 <ScalarProperty Name="Expiration_Date" ColumnName="Expiration_Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notifications">
+            <EntityTypeMapping TypeName="MasterPieceModel.Notification">
+              <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+                <ScalarProperty Name="Notification_Date" ColumnName="Notification_Date" />
+                <ScalarProperty Name="Order_ID" ColumnName="Order_ID" />
+                <ScalarProperty Name="Doctor_ID" ColumnName="Doctor_ID" />
+                <ScalarProperty Name="Notification_ID" ColumnName="Notification_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

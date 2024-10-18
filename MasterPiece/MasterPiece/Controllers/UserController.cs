@@ -117,5 +117,16 @@ namespace MasterPiece.Controllers
             return RedirectToAction("Profile");
 
         }
+
+
+        ///////////////////////////////////////////////  Appointment  /////////////////////////////////////////////////
+
+        public ActionResult AppointmentUser()
+        {
+            ViewBag.Message = "Your contact page.";
+            var tests = db.Tests.ToList();
+            return View(tests);
+        }
+
     }
 }

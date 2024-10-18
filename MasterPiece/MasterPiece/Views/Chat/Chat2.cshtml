@@ -51,6 +51,13 @@
         border: 1px solid #ccc;
         border-radius: 5px;
     }
+
+    p.fs-4.p-2.me-3.mb-1.text-white.rounded-3.bg-primary {
+        font-size: 0.875rem !important;
+    }
+    p.fs-4.p-2.ms-3.mb-1.rounded-3.bg-body-tertiary {
+        font-size: 0.875rem !important;
+    }
 </style>
 
 <link rel="stylesheet" href="~/myContent/css/styles1.css">
@@ -117,12 +124,12 @@
                                                                 @Html.Hidden("senderType", "Patient")
 
                                                                 @*<textarea id="messageInput" name="messageText" rows="3" class="form-control form-control-lg"></textarea>*@
-                                                        <div class="d-flex align-items-center w-100">
-                                                            <input type="text" class="form-control form-control-lg me-2 flex-grow-1 test" id="messageInput" placeholder="Type message" name="messageText" style="width: 80%;">
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="fas fa-paper-plane"></i> Send
-                                                            </button>
-                                                        </div>
+                                                                <div class="d-flex align-items-center w-100">
+                                                                    <input type="text" class="form-control form-control-lg me-2 flex-grow-1 test" id="messageInput" placeholder="Type message" name="messageText" style="width: 80%;">
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        <i class="fas fa-paper-plane"></i> Send
+                                                                    </button>
+                                                                </div>
                                                             }
                                                         </div>
                                                     }
@@ -192,7 +199,7 @@
             setInterval(function () {
                 var chatRoomId = '@ViewBag.ChatRoomId';
                 if (chatRoomId) {
-                    $.get('@Url.Action("GetChatMessages", "Chat")', { chatRoomId: chatRoomId }, function (data) {
+                    $.get('@Url.Action("GetChatMessages2", "Chat")', { chatRoomId: chatRoomId }, function (data) {
                         $('#chatMessages').html(data);
                         $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
                     });
@@ -204,7 +211,6 @@
         });
     </script>
 }
-
 
 
 

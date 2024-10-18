@@ -32,6 +32,7 @@ namespace MasterPiece.Models
         public Nullable<decimal> Amount_paid { get; set; }
         public Nullable<int> Billing_ID { get; set; }
         public string Status { get; set; }
+        public Nullable<int> Patient_ID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointments_Tests> Appointments_Tests { get; set; }

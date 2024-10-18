@@ -129,7 +129,9 @@
                                         <!-- Use the index in the name attribute to bind data to the collection -->
                                         <input type="hidden" name="Test_Order_Tests[@index].ID" value="@test.ID" />
                                         <textarea id="paragraphText" name="Test_Order_Tests[@index].Result" rows="5" class="form-control" placeholder="Type your paragraph here..." readonly>@test.Result</textarea>
-                                        <button type="button" class="btn btn-outline-primary">Notify Doctor</button>
+                                        <a href="@Url.Action("NotifyDoctor", "Admin", new {orderId = test.Order_ID})">
+                                            <button type="button" class="btn btn-outline-primary">Notify Doctor</button>
+                                        </a>
 
                                     }
                                     else

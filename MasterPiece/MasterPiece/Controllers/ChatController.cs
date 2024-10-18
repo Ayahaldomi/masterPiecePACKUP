@@ -360,6 +360,15 @@ namespace MasterPiece.Controllers
 
             return PartialView("_ChatMessagesPartial", messages); // Return the partial view with updated messages
         }
+        public ActionResult GetChatMessages2(int chatRoomId)
+        {
+            var messages = _context.ChatMessages
+                .Where(m => m.ChatRoom_ID == chatRoomId)
+                .OrderBy(m => m.SentAt)
+                .ToList();
+
+            return PartialView("_PatientChat", messages); // Return the partial view with updated messages
+        }
 
         public ActionResult GetChatRooms()
         {

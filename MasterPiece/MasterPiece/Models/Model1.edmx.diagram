@@ -4,9 +4,9 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="0015c9f9677743048a711eca50b9a747" Name="Diagram1">
+      <Diagram DiagramId="0015c9f9677743048a711eca50b9a747" Name="Diagram1" ZoomLevel="77">
         <EntityTypeShape EntityType="MasterPieceModel.Appointment" Width="1.5" PointX="0.75" PointY="9.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="MasterPieceModel.Appointments_Tests" Width="1.5" PointX="3" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MasterPieceModel.Appointments_Tests" Width="1.5" PointX="3.25" PointY="4.375" IsExpanded="true" />
         <EntityTypeShape EntityType="MasterPieceModel.ChatMessage" Width="1.5" PointX="9" PointY="14.625" IsExpanded="true" />
         <EntityTypeShape EntityType="MasterPieceModel.ChatRoom" Width="1.5" PointX="6.75" PointY="14.625" IsExpanded="true" />
         <EntityTypeShape EntityType="MasterPieceModel.Contact" Width="1.5" PointX="6.75" PointY="8.25" IsExpanded="true" />
@@ -29,6 +29,9 @@
         <AssociationConnector Association="MasterPieceModel.FK__Test_Orde__Patie__4AB81AF0" ManuallyRouted="false" />
         <AssociationConnector Association="MasterPieceModel.FK__Test_Orde__Order__4D94879B" ManuallyRouted="false" />
         <AssociationConnector Association="MasterPieceModel.FK__Test_Orde__Test___4E88ABD4" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MasterPieceModel.Notification" Width="1.5" PointX="9.75" PointY="11" />
+        <AssociationConnector Association="MasterPieceModel.FK__Notificat__Docto__1AD3FDA4" />
+        <AssociationConnector Association="MasterPieceModel.FK__Notificat__Order__1BC821DD" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

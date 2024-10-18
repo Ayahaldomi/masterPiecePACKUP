@@ -16,6 +16,7 @@
     <Property Name="Amount_paid" Type="decimal" Precision="10" Scale="2" />
     <Property Name="Billing_ID" Type="int" />
     <Property Name="Status" Type="nvarchar(max)" />
+    <Property Name="Patient_ID" Type="int" />
   </EntityType>
   <EntityType Name="Appointments_Tests">
     <Key>
@@ -78,6 +79,16 @@
     <Property Name="Email" Type="nvarchar(max)" />
     <Property Name="Password" Type="nvarchar(max)" />
     <Property Name="Status" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="Notifications">
+    <Key>
+      <PropertyRef Name="Notification_ID" />
+    </Key>
+    <Property Name="Notification_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Doctor_ID" Type="int" />
+    <Property Name="Order_ID" Type="int" />
+    <Property Name="Notification_Date" Type="datetime" />
+    <Property Name="IsRead" Type="bit" />
   </EntityType>
   <EntityType Name="Package_Tests">
     <Key>
@@ -231,6 +242,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK__Notificat__Docto__1AD3FDA4">
+    <End Role="Lab_Tech" Type="Self.Lab_Tech" Multiplicity="0..1" />
+    <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Lab_Tech">
+        <PropertyRef Name="Tech_ID" />
+      </Principal>
+      <Dependent Role="Notifications">
+        <PropertyRef Name="Doctor_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Notificat__Order__1BC821DD">
+    <End Role="Test_Order" Type="Self.Test_Order" Multiplicity="0..1" />
+    <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Test_Order">
+        <PropertyRef Name="Order_ID" />
+      </Principal>
+      <Dependent Role="Notifications">
+        <PropertyRef Name="Order_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK__Package_T__Packa__440B1D61">
     <End Role="Packages" Type="Self.Packages" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
@@ -309,6 +344,7 @@
     <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Lab_Tech" EntityType="Self.Lab_Tech" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Package_Tests" EntityType="Self.Package_Tests" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Packages" EntityType="Self.Packages" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Patients" EntityType="Self.Patients" Schema="dbo" store:Type="Tables" />
@@ -338,6 +374,14 @@
     <AssociationSet Name="FK__Feedback__Patien__5441852A" Association="Self.FK__Feedback__Patien__5441852A">
       <End Role="Patients" EntitySet="Patients" />
       <End Role="Feedback" EntitySet="Feedback" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Notificat__Docto__1AD3FDA4" Association="Self.FK__Notificat__Docto__1AD3FDA4">
+      <End Role="Lab_Tech" EntitySet="Lab_Tech" />
+      <End Role="Notifications" EntitySet="Notifications" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Notificat__Order__1BC821DD" Association="Self.FK__Notificat__Order__1BC821DD">
+      <End Role="Test_Order" EntitySet="Test_Order" />
+      <End Role="Notifications" EntitySet="Notifications" />
     </AssociationSet>
     <AssociationSet Name="FK__Package_T__Packa__440B1D61" Association="Self.FK__Package_T__Packa__440B1D61">
       <End Role="Packages" EntitySet="Packages" />

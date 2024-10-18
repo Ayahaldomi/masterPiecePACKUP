@@ -88,6 +88,9 @@
                             <a href="@Url.Action("ProfileEdit", "User", new {id = user.Patient_ID})"> <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">View Profile</button> </a>
                         </div>
                         <div class="d-flex justify-content-center mb-2">
+                            <a href="@Url.Action("AppointmentUser", "User", new {id = user.Patient_ID})"> <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary">Book Appointment</button> </a>
+                        </div>
+                        <div class="d-flex justify-content-center mb-2">
                             @using (Html.BeginForm("CreateChatRoom", "Chat", FormMethod.Post, new { @class = "d-inline" }))
                             {
                                 @Html.Hidden("labTechId", 1)

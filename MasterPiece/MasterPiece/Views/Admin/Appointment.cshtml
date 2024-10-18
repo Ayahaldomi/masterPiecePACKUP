@@ -30,13 +30,50 @@
     .container-fluid {
         padding-top: 120px !important;
     }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+        }
+
+            .pagination button.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+    /* Custom styles for the status text based on the appointment status */
+    .status-completed {
+        background-color: #d4edda; /* Light green */
+        color: #155724;
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    .status-pending {
+        background-color: #fff3cd; /* Light yellow */
+        color: #856404;
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    .status-default {
+        padding: 5px;
+        border-radius: 5px;
+    }
 </style>
 
 <div class="container">
     <div class="card shadow p-3 mb-5 bg-white rounded">
         <h2 class="text-center">Appointment</h2>
-
-
 
         <!-- Filter Buttons -->
         <div class="filter-buttons text-center mb-3">
@@ -44,6 +81,9 @@
             <button class="btn btn-outline-primary" onclick="filterAppointments('today')">Today's Appointments</button>
             <button class="btn btn-outline-primary" onclick="filterAppointments('pending')">Pending</button>
             <button class="btn btn-outline-primary" onclick="filterAppointments('completed')">Completed</button>
+        </div>
+        <div class="filter-buttons text-center mb-3" id="emailPatients" style="display:none;">
+            <a href="@Url.Action("EmailAppointment","Admin")"> <button class="btn btn-outline-primary">Email All Patients</button></a>
         </div>
 
         <div class="table-responsive">
@@ -73,13 +113,32 @@
                             <td>@Html.DisplayFor(modelItem => item.Full_Name)</td>
                             <td>@Html.DisplayFor(modelItem => item.Gender)</td>
                             <td>@Html.DisplayFor(modelItem => item.Date_Of_Birth)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Email_Address)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Phone_Number)</td>
+                            @*<td>@Html.DisplayFor(modelItem => item.Email_Address)</td>*@
+                            <td><a href="mailTo:@item.Email_Address">@item.Email_Address</a></td>
+                            @*<td>@Html.DisplayFor(modelItem => item.Phone_Number)</td>*@
+                            <td><a href=" https://wa.me/@item.Phone_Number">@item.Phone_Number</a></td>
                             <td>@Html.DisplayFor(modelItem => item.Home_Address)</td>
                             <td>@Html.DisplayFor(modelItem => item.Date_Of_Appo)</td>
                             <td>@Html.DisplayFor(modelItem => item.Total_price)</td>
                             <td>@Html.DisplayFor(modelItem => item.Amount_paid)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                            <td>
+                                <span class="@{
+                                    if (item.Status.ToLower() == "completed")
+                                    {
+                                        @:status-completed
+                                    }
+                                    else if (item.Status.ToLower() == "pending")
+                                    {
+                                        @:status-pending
+                                    }
+                                    else
+                                    {
+                                        @:status-default
+                                    }
+                                }">
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </span>
+                            </td>
                             <td>
                                 @if (item.TestNames != null && item.TestNames.Any())
                                 {
@@ -90,41 +149,118 @@
                                     <span>No tests</span>
                                 }
                             </td>
-                            <td>
-                                @Html.ActionLink("Complete Appointment", "Edit", new { id = item.ID }, new { @class = "btn btn-sm btn-warning" }) |
+                            <td style="text-align:center;">
+                                @if (item.Status.ToLower() == "completed")
+                                {
+                                    <button class="btn btn-sm btn-outline-warning" disabled>Completed</button>
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Complete Appointment", "CompleteAppointment", new { id = item.ID }, new { @class = "btn btn-sm btn-outline-warning" })
+                                }
+                                <!-- Delete Button -->
+                                @Html.ActionLink("Delete", "DeleteAppointment", new { id = item.ID }, new { @class = "btn btn-sm btn-outline-danger", onclick = "return confirm('Are you sure you want to delete this appointment?');" })
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
     </div>
 </div>
 
-
 <script>
+    const rowsPerPage = 5; // Number of rows per page
+    let currentPage = 1;
+
+    // Function to display rows based on the page number
+    function displayRows(page) {
+        const rows = document.querySelectorAll('.appointment-row');
+        const totalRows = rows.length;
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        // Hide all rows
+        rows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Update pagination
+        updatePagination(page, totalRows);
+    }
+
+    // Function to update pagination buttons
+    function updatePagination(page, totalRows) {
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const paginationDiv = document.getElementById('pagination');
+        paginationDiv.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.classList.add('page-btn');
+            if (i === page) {
+                button.classList.add('active');
+            }
+            button.onclick = function () {
+                currentPage = i;
+                displayRows(i);
+            };
+            paginationDiv.appendChild(button);
+        }
+    }
+
+    // Function to filter rows based on the selected filter
     function filterAppointments(filter) {
+        let emailPatients = document.getElementById("emailPatients");
+
         const rows = document.querySelectorAll('.appointment-row');
         const today = new Date().toISOString().split('T')[0]; // Get today's date in 'yyyy-mm-dd' format
+        let visibleRows = 0; // Track how many rows match the filter
 
         rows.forEach(row => {
             const appointmentDate = row.getAttribute('data-date');
             const status = row.getAttribute('data-status').toLowerCase();
-
-            // Default to show all rows
             let showRow = true;
 
             if (filter === 'today') {
                 showRow = appointmentDate === today;
+                emailPatients.style.display = "Block";
+
             } else if (filter === 'pending') {
                 showRow = status === 'pending';
+                emailPatients.style.display = "none";
+
             } else if (filter === 'completed') {
                 showRow = status === 'completed';
+                emailPatients.style.display = "none";
+
             }
 
             // Toggle row visibility based on filter
             row.style.display = showRow ? '' : 'none';
-        });
-    }
-</script>
 
+            // Count visible rows
+            if (showRow) visibleRows++;
+        });
+
+        // Reset pagination after filtering
+        if (filter === 'all') {
+            displayRows(currentPage);
+            emailPatients.style.display = "none";
+
+        } else {
+            updatePagination(1, visibleRows); // Update pagination based on the visible rows
+        }
+    }
+
+    // Initial display
+    displayRows(currentPage);
+</script>

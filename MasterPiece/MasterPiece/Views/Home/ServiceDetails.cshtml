@@ -192,6 +192,7 @@
             <div>
                 <i class="fas fa-wallet history-checkup-timer1"></i>
                 <span style="font-size: 26px; font-weight: 500;"> @Model.Price JOD</span>
+                <small style="color: red; text-decoration: line-through;">@Model.Old_price JOD</small>
             </div>
             <div>
                 <i class="fas fa-history fa-flip-horizontal history-checkup-timer"></i>
@@ -224,7 +225,7 @@
 <!-- Info Section (Careers, Health Awareness, Contact Us) -->
 <div class="info-section">
     <div><a href="@Url.Action("Contact", "Home")" style="text-decoration: none; color: inherit;"><i class="fas fa-map-marker-alt"></i> Visit Us</a></div>
-    <div><a href="@Url.Action("Appointment", "Home")" style="text-decoration: none; color: inherit;"><i class="fas fa-calendar-alt"></i> Book An Appointment</a></div>
+    <div><a href="@Url.Action("AppointmentDetails", "Home", new {id = Model.Package_ID})" style="text-decoration: none; color: inherit;"><i class="fas fa-calendar-alt"></i> Book An Appointment</a></div>
     <div><a href="@Url.Action("Contact", "Home")" style="text-decoration: none; color: inherit;"><i class="fas fa-phone"></i> Contact Us</a></div>
 
 </div>

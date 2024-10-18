@@ -18,6 +18,7 @@ namespace MasterPiece.Models
         public Test_Order()
         {
             this.Test_Order_Tests = new HashSet<Test_Order_Tests>();
+            this.Notifications = new HashSet<Notification>();
         }
     
         public int Order_ID { get; set; }
@@ -32,5 +33,7 @@ namespace MasterPiece.Models
         public virtual Patient Patient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Test_Order_Tests> Test_Order_Tests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

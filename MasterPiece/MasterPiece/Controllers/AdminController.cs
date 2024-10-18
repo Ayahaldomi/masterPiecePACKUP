@@ -11,6 +11,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using PayPal.Api;
 using MimeKit;
 using MailKit.Net.Smtp;
+using MailKit.Search;
 
 namespace MasterPiece.Controllers
 {
@@ -89,12 +90,33 @@ namespace MasterPiece.Controllers
         {
             var order = db.Test_Order.Find(orderID);
             ViewBag.TestsList = db.Tests.ToList();
+            // Use the ViewModel in your query
+            var packageList = db.Packages
+    .Select(p => new
+    {
+        Package_ID = p.Package_ID,
+        Package_Name = p.Package_Name,
+        Price = p.Price,
+        TestIds = p.Package_Tests.Select(pt => pt.Test_ID) // Retrieve Test IDs only for now
+    })
+    .ToList() // Retrieve data into memory
+    .Select(p => new PackageViewModel
+    {
+        Package_ID = p.Package_ID,
+        Package_Name = p.Package_Name,
+        Price = p.Price,
+        Tests = string.Join(",", p.TestIds.Select(id => id.ToString())) // Now apply string.Join in memory
+    })
+    .ToList();
+
+            ViewBag.PackagesList= packageList;
+
             return View(order);
         }
 
 
         [HttpPost]
-        public ActionResult SaveTests(int orderId, List<Test_Order_Tests> selectedTests)
+        public ActionResult SaveTests(int orderId, List<Test_Order_Tests> selectedTests, string totalPriceTest)
         {
             // Get the current order
             var order = db.Test_Order.FirstOrDefault(o => o.Order_ID == orderId);
@@ -108,6 +130,8 @@ namespace MasterPiece.Controllers
                 db.Test_Order_Tests.RemoveRange(order.Test_Order_Tests);
             }
 
+            string numericPart = totalPriceTest.Replace("JOD", "").Trim();
+            var nummm = Convert.ToDecimal(numericPart);
 
             decimal totalPrice = 0;
             foreach (var testId in selectedTests)
@@ -126,21 +150,19 @@ namespace MasterPiece.Controllers
                     };
                     db.Test_Order_Tests.Add(orderTest);
 
-                    // Add the price of the test to the total
                     totalPrice += test.Price ?? 0;
                 }
             }
 
-            // Update the total price of the order
-            order.Total_Price = totalPrice;
+            order.Total_Price = nummm;
             db.Entry(order).State = EntityState.Modified;
 
-            // Save all changes to the database
             db.SaveChanges();
 
-            // Redirect to the payment page (or another appropriate page)
             return RedirectToAction("AddPatientPayment", new { orderId = order.Order_ID });
         }
+
+        
 
 
         public ActionResult AddPatientPayment(int orderId) //int orderId
@@ -246,7 +268,33 @@ namespace MasterPiece.Controllers
             return View(model); // Return view with model if there's an error
         }
 
-        
+        public ActionResult NotifyDoctor(int orderId)
+        {
+            // Get the doctor details (this is just an example)
+            var doctor = db.Lab_Tech.Where(l => l.Status == "Doctor").FirstOrDefault(); // Replace with actual doctor logic
+
+            if (doctor != null)
+            {
+                // Create a new notification
+                var notification = new Models.Notification
+                {
+                    Doctor_ID = doctor.Tech_ID,
+                    Order_ID = orderId,
+                    Notification_Date = DateTime.Now,
+                    IsRead = false,
+
+                };
+
+                // Add to the database
+                db.Notifications.Add(notification);
+                db.SaveChanges();
+
+            }
+
+            return RedirectToAction("TestResultsAdd", new { OrderID = orderId });
+        }
+
+
 
 
         ///////////////////////////////////////  Appointment  ////////////////////////////////////////////////////
@@ -277,6 +325,195 @@ namespace MasterPiece.Controllers
 
             return View(appointments.ToList());
         }
+
+        public ActionResult CompleteAppointment(int id)
+        {
+            var appointment = db.Appointments.Include(l => l.Appointments_Tests).FirstOrDefault(a => a.ID == id);
+
+            if (appointment.Patient_ID == null || appointment.Patient_ID == 0)
+            {
+                var patient = new Patient
+                {
+                    Full_Name = appointment.Full_Name,
+                    Date_Of_Birth = appointment.Date_Of_Birth,
+                    Gender = appointment.Gender,
+                    Phone_Number = Convert.ToInt32(appointment.Phone_Number),
+                    Home_Address = appointment.Home_Address,
+                    Email = appointment.Email_Address,
+
+                };
+                db.Patients.Add(patient);
+                db.SaveChanges();
+
+                var order = new Test_Order
+                {
+                    Patient_ID = patient.Patient_ID,
+                    Date = DateTime.Now,
+                    Tech_ID = 1,
+                    Status = "Pending",
+                    Total_Price = appointment.Total_price,
+                    Amount_Paid = appointment.Amount_paid,
+
+                };
+                db.Test_Order.Add(order);
+                db.SaveChanges();
+
+                foreach (var testId in appointment.Appointments_Tests)
+                {
+                    var test = db.Tests.FirstOrDefault(t => t.Test_ID == testId.Test_ID);
+                    if (test != null)
+                    {
+                        var orderTest = new Test_Order_Tests
+                        {
+                            Order_ID = order.Order_ID,
+                            Test_ID = testId.Test_ID,
+                            Date_Of_Result = null,
+                            Result = null,
+                            Comment = null,
+                            Status = "Pending"
+                        };
+                        db.Test_Order_Tests.Add(orderTest);
+                        
+                    }
+                }
+
+                appointment.Status = "Completed";
+                db.Entry(appointment).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return RedirectToAction("AddPatientPayment", new { orderId = order.Order_ID });
+
+            }
+            else
+            {
+                var order = new Test_Order
+                {
+                    Patient_ID = appointment.Patient_ID,
+                    Date = DateTime.Now,
+                    Tech_ID = 1,
+                    Status = "Pending",
+                    Total_Price = appointment.Total_price,
+                    Amount_Paid = appointment.Amount_paid,
+
+                };
+                db.Test_Order.Add(order);
+                db.SaveChanges();
+
+                foreach (var testId in appointment.Appointments_Tests)
+                {
+                    var test = db.Tests.FirstOrDefault(t => t.Test_ID == testId.Test_ID);
+                    if (test != null)
+                    {
+                        var orderTest = new Test_Order_Tests
+                        {
+                            Order_ID = order.Order_ID,
+                            Test_ID = testId.Test_ID,
+                            Date_Of_Result = null,
+                            Result = null,
+                            Comment = null,
+                            Status = "Pending"
+                        };
+                        db.Test_Order_Tests.Add(orderTest);
+
+                    }
+                }
+                db.SaveChanges();
+
+                appointment.Status = "Completed";
+                db.Entry(appointment).State = EntityState.Modified;
+
+                return RedirectToAction("AddPatientPayment", new { orderId = order.Order_ID });
+
+
+            }
+        
+        }
+
+        public ActionResult DeleteAppointment(int id)
+        {
+            // Find the appointment by ID
+            var appointment = db.Appointments.Find(id);
+            if (appointment == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Remove the appointment from the database
+            db.Appointments.Remove(appointment);
+            db.SaveChanges();
+
+            // Redirect back to the appointment list or another page
+            return RedirectToAction("Appointment"); // Assuming Index is the action that lists all appointments
+        }
+
+
+        public ActionResult EmailAppointment()
+        {
+            var dateToday = DateTime.Now.Date;
+            var appointmentToday = db.Appointments
+    .Where(a => a.Date_Of_Appo.HasValue &&
+                System.Data.Entity.DbFunctions.TruncateTime(a.Date_Of_Appo.Value) == dateToday &&
+                a.Status == "Pending")
+    .ToList();
+            foreach (var patient in appointmentToday)
+            {
+                string selectedTestsList = "";  // Initialize an empty string to store the test names.
+
+                foreach (var selectedTest in patient.Appointments_Tests)
+                {
+                    var test = db.Tests.Where(p => p.Test_ID == selectedTest.Test_ID).FirstOrDefault();
+
+                    selectedTestsList += test.Test_Name + ", ";
+                }
+                string appointmentDate = patient.Date_Of_Appo.HasValue
+                ? patient.Date_Of_Appo.Value.ToString("MMMM dd, yyyy")
+                : "No appointment date set";
+
+                string fromEmail = "election2024jordan@gmail.com";
+                string fromName = "PrimeLab";
+                string subjectText = "Appointment";
+                string messageText = $@"
+            <html>
+            <body>
+                <h2>Hello {patient.Full_Name},</h2>
+                <p>We Are Reminding You That You Have Scheduled An Appointment Today</p>
+                <p><strong>Appointment Details:</strong></p>
+                <ul>
+                    <li><strong>Date of Appointment:</strong> {patient.Date_Of_Appo}</li>
+                    <li><strong>Total Price:</strong> {patient.Total_price:C}</li>
+                    <li><strong>Amount Paid:</strong> {patient.Amount_paid:C}</li>
+                    <li><strong>Tests Scheduled:</strong> {selectedTestsList}</li>
+                </ul>
+                <p>If you have any questions or need to make changes to your appointment, feel free to contact us at this email or call us at (xxx-xxx-xxxx).</p>
+                <p>We look forward to seeing you at PrimeLab!</p>
+                <p>With best regards,<br>PrimeLab Team</p>
+            </body>
+            </html>";
+                string toEmail = patient.Email_Address;
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 465; // Port 465 for SSL
+
+                string smtpUsername = "election2024jordan@gmail.com";
+                string smtpPassword = "zwht jwiz ivfr viyt"; // Ensure this is correct
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(fromName, fromEmail));
+                message.To.Add(new MailboxAddress("", toEmail));
+                message.Subject = subjectText;
+                message.Body = new TextPart("html") { Text = messageText };
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpServer, smtpPort, true); // Use SSL
+                    client.Authenticate(smtpUsername, smtpPassword);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+            }
+            return RedirectToAction("Appointment");
+        }
+
+
 
         public ActionResult InventoryManagement()
         {
@@ -412,6 +649,13 @@ namespace MasterPiece.Controllers
                 return RedirectToAction("Profile", new { id = updatedEmployee.Tech_ID });
             }
             return View("EmployeeProfile", updatedEmployee);
+        }
+
+
+        public ActionResult LogOut()
+        {
+            Session.Remove("Employee");
+            return RedirectToAction("EmployeePortal", "Home");
         }
 
 

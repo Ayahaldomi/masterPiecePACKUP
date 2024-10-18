@@ -18,6 +18,7 @@ namespace MasterPiece.Models
         public Lab_Tech()
         {
             this.ChatRooms = new HashSet<ChatRoom>();
+            this.Notifications = new HashSet<Notification>();
         }
     
         public int Tech_ID { get; set; }
@@ -28,5 +29,7 @@ namespace MasterPiece.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChatRoom> ChatRooms { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

@@ -103,61 +103,61 @@
                         </li>
 
                         @*<li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("TestResults", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fa-solid fa-microscope"></i>
-                </span>
-                <span class="hide-menu">Test Results</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("InventoryManagement", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fa-solid fa-warehouse"></i>
-                </span>
-                <span class="hide-menu">Inventory Management</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("TestsDocumentation", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fa-solid fa-vials"></i>
-                </span>
-                <span class="hide-menu">Tests Documentation</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("Appointment", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fa-regular fa-calendar-check"></i>
-                </span>
-                <span class="hide-menu">Appointment</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("Employees", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fas fa-user "></i>
-                </span>
-                <span class="hide-menu">Employees</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("Packages", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fas fa-box "></i>
-                </span>
-                <span class="hide-menu">Packages</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a class="sidebar-link" href="@Url.Action("FeedBacks", "Admin")" aria-expanded="false">
-                <span>
-                    <i class="fas fa-comment-dots "></i>
-                </span>
-                <span class="hide-menu">FeedBacks</span>
-            </a>
-        </li>*@
+                                <a class="sidebar-link" href="@Url.Action("TestResults", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fa-solid fa-microscope"></i>
+                                    </span>
+                                    <span class="hide-menu">Test Results</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("InventoryManagement", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fa-solid fa-warehouse"></i>
+                                    </span>
+                                    <span class="hide-menu">Inventory Management</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("TestsDocumentation", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fa-solid fa-vials"></i>
+                                    </span>
+                                    <span class="hide-menu">Tests Documentation</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("Appointment", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fa-regular fa-calendar-check"></i>
+                                    </span>
+                                    <span class="hide-menu">Appointment</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("Employees", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fas fa-user "></i>
+                                    </span>
+                                    <span class="hide-menu">Employees</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("Packages", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fas fa-box "></i>
+                                    </span>
+                                    <span class="hide-menu">Packages</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("FeedBacks", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fas fa-comment-dots "></i>
+                                    </span>
+                                    <span class="hide-menu">FeedBacks</span>
+                                </a>
+                            </li>*@
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -176,11 +176,23 @@
                                 <i class="ti ti-menu-2"></i>
                             </a>
                         </li>
-                        <li class="nav-item">
+
+                        <!-- Notification Icon -->
+                        <li class="nav-item dropdown notification-dropdown">
                             <a class="nav-link nav-icon-hover" href="javascript:void(0)">
                                 <i class="ti ti-bell-ringing"></i>
                                 <div class="notification bg-primary rounded-circle"></div>
                             </a>
+
+                            <!-- Notification Dropdown -->
+                            <div class="notification-dropdown-content" id="notification-dropdown-content">
+                                <div class="notification-header">
+                                    <h6>Notifications</h6>
+                                </div>
+                                <div class="notification-list" id="notificationList">
+                                    <!-- Notifications will be dynamically injected here -->
+                                </div>
+                            </div>
                         </li>
                     </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
@@ -221,6 +233,102 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.querySelector('.notification-dropdown').addEventListener('mouseenter', function () {
+            // Fetch notifications when hovering over the bell icon
+            fetch('/Notifications/GetLatest')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationList = document.getElementById('notificationList');
+                    notificationList.innerHTML = ''; // Clear current notifications
+
+                    if (data.length > 0) {
+                        data.forEach(notification => {
+                            const item = document.createElement('li');
+                            item.classList.add('notification-item');
+
+                            // Build the URL dynamically in JavaScript
+                            const url = `/Admin/DoctorReportAdd?orderID=${notification.Order_ID}`;
+
+                            // Try parsing the date to handle "Invalid Date"
+                            const notificationDate = new Date(notification.Notification_Date);
+                            const formattedDate = isNaN(notificationDate.getTime())
+                                ? 'Unknown Date' // Fallback if the date is invalid
+                                : notificationDate.toLocaleString(); // Use toLocaleString for a better format
+
+                            // Construct the list item with the link
+                            item.innerHTML = `
+                        <a href="${url}">
+                            <p>Order #${notification.Order_ID} requires your attention</p>
+                            <small>${formattedDate}</small>
+                        </a>`;
+
+                            notificationList.appendChild(item);
+                        });
+                    } else {
+                        const noNotifications = document.createElement('li');
+                        noNotifications.classList.add('notification-item');
+                        noNotifications.innerHTML = 'No new notifications';
+                        notificationList.appendChild(noNotifications);
+                    }
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
+        });
+
+    </script>
+
+    <style>
+        .notification-list a {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit the parent element's color */
+            display: block; /* Make the whole link clickable */
+            padding: 10px; /* Add padding for better clickable area */
+        }
+
+            .notification-list a:hover {
+                background-color: #f5f5f5; /* Add hover effect */
+            }
+        .notification-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+            right: -250px;
+            z-index: 1;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .notification-dropdown:hover .notification-dropdown-content {
+            display: block;
+        }
+
+        .notification-header {
+            font-weight: bold;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+            .notification-item:last-child {
+                border-bottom: none;
+            }
+
+            .notification-item:hover {
+                background-color: #f5f5f5;
+            }
+    </style>
 
     @RenderSection("Scripts", required: false)
     <script src="~/myContent/assets/libs/jquery/dist/jquery.min.js"></script>

@@ -218,27 +218,36 @@
 
 </div>
 <script>
-    // Store the original price to reset when discount is removed
-    let originalPrice = @Model.Total_Price; // Replace with your actual original price
-    let totalPriceElement = document.querySelector('#totalPrice');
-    applyDiscount(@Model.Discount_Persent);
-    // Function to apply a discount
-    function applyDiscount(discountPercentage) {
+    // Ensure originalPrice is correctly set to a number
+let originalPrice = @(Model.Total_Price.HasValue ? Model.Total_Price.Value : 0); // Defaults to 0 if null
+let totalPriceElement = document.querySelector('#totalPrice');
+
+// Set the total price in the element, ensuring it's a valid number
+if (!isNaN(originalPrice)) {
+    totalPriceElement.innerText = `${originalPrice.toFixed(2)} JOD`; // Set the initial total price
+}
+
+// Apply discount if any
+applyDiscount(@Model.Discount_Persent);
+
+// Function to apply a discount
+function applyDiscount(discountPercentage) {
+    if (discountPercentage) {
         const discountedPrice = originalPrice - (originalPrice * (discountPercentage / 100));
         totalPriceElement.innerText = `${discountedPrice.toFixed(2)} JOD`; // Update the displayed total
     }
+}
 
-    // Function to remove the discount and reset the total price
-    function removeDiscount() {
-        // Reset the total price to the original value
-        totalPriceElement.innerText = `${originalPrice.toFixed(2)} JOD`;
+// Function to remove the discount and reset the total price
+function removeDiscount() {
+    totalPriceElement.innerText = `${originalPrice.toFixed(2)} JOD`;
 
-        // Uncheck the selected radio button (if any)
-        const selectedRadio = document.querySelector('input[name="discountOptions"]:checked');
-        if (selectedRadio) {
-            selectedRadio.checked = false; // Uncheck the radio button
-        }
+    // Uncheck the selected radio button (if any)
+    const selectedRadio = document.querySelector('input[name="discountOptions"]:checked');
+    if (selectedRadio) {
+        selectedRadio.checked = false; // Uncheck the radio button
     }
+}
     validatePayment()
     // Function to validate the payment when Save Payment is clicked
     function validatePayment() {

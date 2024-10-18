@@ -4,6 +4,7 @@
     <EntitySetMapping Name="Appointments">
       <EntityTypeMapping TypeName="MasterPieceModel.Appointment">
         <MappingFragment StoreEntitySet="Appointments">
+          <ScalarProperty Name="Patient_ID" ColumnName="Patient_ID" />
           <ScalarProperty Name="ID" ColumnName="ID" />
           <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
           <ScalarProperty Name="Gender" ColumnName="Gender" />
@@ -166,6 +167,17 @@
           <ScalarProperty Name="Inventory" ColumnName="Inventory" />
           <ScalarProperty Name="Sample_Type" ColumnName="Sample_Type" />
           <ScalarProperty Name="Expiration_Date" ColumnName="Expiration_Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Notifications">
+      <EntityTypeMapping TypeName="MasterPieceModel.Notification">
+        <MappingFragment StoreEntitySet="Notifications">
+          <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+          <ScalarProperty Name="Notification_Date" ColumnName="Notification_Date" />
+          <ScalarProperty Name="Order_ID" ColumnName="Order_ID" />
+          <ScalarProperty Name="Doctor_ID" ColumnName="Doctor_ID" />
+          <ScalarProperty Name="Notification_ID" ColumnName="Notification_ID" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

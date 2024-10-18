@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using System.IO;
 using Microsoft.AspNet.SignalR.Hubs;
+using MimeKit;
+using PayPal.Api;
+using MailKit.Net.Smtp;
 
 namespace MasterPiece.Controllers
 {
@@ -78,8 +81,31 @@ namespace MasterPiece.Controllers
 
            
         }
+
+        public ActionResult AppointmentDetails(int id)
+        {
+            var packageTests = db.Package_Tests.Where(t => t.Package_ID == id).ToList();
+            var package = db.Packages.Find(id);
+            List<Test> testsList = new List<Test>();
+
+            // Iterate over each Package_Test and retrieve the corresponding Test
+            foreach (var packageTest in packageTests)
+            {
+                var test = db.Tests.Where(t => t.Test_ID == packageTest.Test_ID).FirstOrDefault();
+                if (test != null)
+                {
+                    testsList.Add(test);
+                }
+            }
+
+            // Store the testsList in TempData
+            TempData["TestsPackageList"] = testsList;
+            TempData["PackagePrice"] = package.Price;
+
+            return RedirectToAction("Appointment");
+        }
         /////////////////////////////////////////////   Appointment   ///////////////////////////////////////////
-        
+
         public ActionResult Appointment()
         {
             ViewBag.Message = "Your contact page.";
@@ -172,12 +198,73 @@ namespace MasterPiece.Controllers
 
             db.SaveChanges();
 
-            // Clear the appointment data from the session
-            Session.Remove("AppointmentData");
+            try
+            {
+                string selectedTestsList = "";  
+                foreach (var selectedTest in appointment.SelectedTests)
+                {
+                    var test = db.Tests.Where(p => p.Test_ID == selectedTest.Test_ID).FirstOrDefault();
 
-            TempData["confirmForm"] = appointment.Full_Name;
+                    selectedTestsList += test.Test_Name + ", ";
+                }
+                string appointmentDate = appointment.Date_Of_Appo.HasValue
+                ? appointment.Date_Of_Appo.Value.ToString("MMMM dd, yyyy")
+                : "No appointment date set";
 
-            return RedirectToAction("Appointment");
+                string fromEmail = "election2024jordan@gmail.com";
+                string fromName = "PrimeLab";
+                string subjectText = "Appointment";
+                string messageText = $@"
+            <html>
+            <body>
+                <h2>Hello {appointment.Full_Name},</h2>
+                <p>Thank you for scheduling your appointment with PrimeLab.</p>
+                <p><strong>Appointment Details:</strong></p>
+                <ul>
+                    <li><strong>Date of Appointment:</strong> {appointmentDate}</li>
+                    <li><strong>Total Price:</strong> {appointment.Total_price:C}</li>
+                    <li><strong>Amount Paid:</strong> {appointment.Amount_paid:C}</li>
+                    <li><strong>Tests Scheduled:</strong> {selectedTestsList}</li>
+                </ul>
+                <p>If you have any questions or need to make changes to your appointment, feel free to contact us at this email or call us at (xxx-xxx-xxxx).</p>
+                <p>We look forward to seeing you at PrimeLab!</p>
+                <p>With best regards,<br>PrimeLab Team</p>
+            </body>
+            </html>";
+                string toEmail = appointment.Email_Address;
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 465; // Port 465 for SSL
+
+                string smtpUsername = "election2024jordan@gmail.com";
+                string smtpPassword = "zwht jwiz ivfr viyt"; // Ensure this is correct
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(fromName, fromEmail));
+                message.To.Add(new MailboxAddress("", toEmail));
+                message.Subject = subjectText;
+                message.Body = new TextPart("html") { Text = messageText };
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpServer, smtpPort, true); // Use SSL
+                    client.Authenticate(smtpUsername, smtpPassword);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+                TempData["confirmForm"] = appointment.Full_Name;
+
+                // Clear the appointment data from the session
+                Session.Remove("AppointmentData");
+
+                return RedirectToAction("Appointment");
+            }
+            catch
+            {
+                TempData["confirmForm"] = appointment.Full_Name;
+
+                return RedirectToAction("Appointment");
+            }
+            
         }
 
         public ActionResult CloseTab() { return View(); }
@@ -226,7 +313,7 @@ namespace MasterPiece.Controllers
             {
                 var appointmentTest = new Appointments_Tests
                 {
-                    Appointment_ID = app.ID, // Use the saved appointment ID
+                    Appointment_ID = app.ID, 
                     Test_ID = selectedTest.Test_ID
                 };
 
@@ -235,9 +322,72 @@ namespace MasterPiece.Controllers
 
             db.SaveChanges();
 
-            TempData["confirmForm"] = appointment.Full_Name;
+            try
+            {
+                string selectedTestsList = "";  // Initialize an empty string to store the test names.
 
-            return RedirectToAction("Appointment");
+                foreach (var selectedTest in appointment.SelectedTests)
+                {
+                    var test = db.Tests.Where(p => p.Test_ID == selectedTest.Test_ID).FirstOrDefault();
+
+                        selectedTestsList += test.Test_Name + ", ";
+                }
+                string appointmentDate = appointment.Date_Of_Appo.HasValue
+                ? appointment.Date_Of_Appo.Value.ToString("MMMM dd, yyyy")
+                : "No appointment date set";
+
+                string fromEmail = "election2024jordan@gmail.com";
+                string fromName = "PrimeLab";
+                string subjectText = "Appointment";
+                string messageText = $@"
+            <html>
+            <body>
+                <h2>Hello {appointment.Full_Name},</h2>
+                <p>Thank you for scheduling your appointment with PrimeLab.</p>
+                <p><strong>Appointment Details:</strong></p>
+                <ul>
+                    <li><strong>Date of Appointment:</strong> {appointment.Date_Of_Appo}</li>
+                    <li><strong>Total Price:</strong> {appointment.Total_price:C}</li>
+                    <li><strong>Amount Paid:</strong> {appointment.Amount_paid:C}</li>
+                    <li><strong>Tests Scheduled:</strong> {selectedTestsList}</li>
+                </ul>
+                <p>If you have any questions or need to make changes to your appointment, feel free to contact us at this email or call us at (xxx-xxx-xxxx).</p>
+                <p>We look forward to seeing you at PrimeLab!</p>
+                <p>With best regards,<br>PrimeLab Team</p>
+            </body>
+            </html>";
+                string toEmail = appointment.Email_Address;
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 465; // Port 465 for SSL
+
+                string smtpUsername = "election2024jordan@gmail.com";
+                string smtpPassword = "zwht jwiz ivfr viyt"; // Ensure this is correct
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(fromName, fromEmail));
+                message.To.Add(new MailboxAddress("", toEmail));
+                message.Subject = subjectText;
+                message.Body = new TextPart("html") { Text = messageText };
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpServer, smtpPort, true); // Use SSL
+                    client.Authenticate(smtpUsername, smtpPassword);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+                TempData["confirmForm"] = appointment.Full_Name;
+
+                return RedirectToAction("Appointment");
+            }
+            catch
+            {
+                TempData["confirmForm"] = appointment.Full_Name;
+
+                return RedirectToAction("Appointment");
+            }
+
+           
         }
 
         [HttpGet]

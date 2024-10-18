@@ -278,9 +278,20 @@
                                     <p class="text-white mb-2">24 Hours</p>
                                     <h5 class="text-white mb-0">Support</h5>
                                     @*<p class="text-light small">First two messages are free. Additional messages are available for a nominal charge.</p>*@
-                                    <a href="@Url.Action("CreateChatRoom", "Chat")" class="btn btn-light mt-2">
-                                        Chat with a Doctor
-                                    </a>
+                                    @if (Session["userSession"] == null)
+                                    {
+                                        <a href="@Url.Action("Login", "User")" class="btn btn-light mt-2">
+                                            Chat with a Doctor
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("CreateChatRoom", "Chat")" class="btn btn-light mt-2">
+                                            Chat with a Doctor
+                                        </a>
+
+                                    }
+
                                 </div>
                             </div>
                         </div>

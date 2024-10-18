@@ -38,5 +38,6 @@ namespace MasterPiece.Models
         public virtual DbSet<Test_Order> Test_Order { get; set; }
         public virtual DbSet<Test_Order_Tests> Test_Order_Tests { get; set; }
         public virtual DbSet<Test> Tests { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
     }
 }

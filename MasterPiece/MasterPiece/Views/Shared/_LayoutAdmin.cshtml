@@ -44,6 +44,9 @@
     </style>
 </head>
 <body>
+    @{ 
+        var employee = Session["Employee"] as MasterPiece.Models.Lab_Tech;
+    }
     <!--  Body Wrapper -->
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -98,14 +101,14 @@
                                 <span class="hide-menu">Test Results</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="@Url.Action("InventoryManagement", "Admin")" aria-expanded="false">
-                                <span>
-                                    <i class="fa-solid fa-warehouse"></i>
-                                </span>
-                                <span class="hide-menu">Inventory Management</span>
-                            </a>
-                        </li>
+                        @*<li class="sidebar-item">
+            <a class="sidebar-link" href="@Url.Action("InventoryManagement", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fa-solid fa-warehouse"></i>
+                </span>
+                <span class="hide-menu">Inventory Management</span>
+            </a>
+        </li>*@
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="@Url.Action("TestsDocumentation", "Admin")" aria-expanded="false">
                                 <span>
@@ -122,14 +125,7 @@
                                 <span class="hide-menu">Appointment</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="@Url.Action("Employees", "Admin")" aria-expanded="false">
-                                <span>
-                                    <i class="fas fa-user "></i>
-                                </span>
-                                <span class="hide-menu">Employees</span>
-                            </a>
-                        </li>
+
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="@Url.Action("Packages", "Admin")" aria-expanded="false">
                                 <span>
@@ -138,14 +134,61 @@
                                 <span class="hide-menu">Packages</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="@Url.Action("FeedBacks", "Admin")" aria-expanded="false">
-                                <span>
-                                    <i class="fas fa-comment-dots "></i>
-                                </span>
-                                <span class="hide-menu">FeedBacks</span>
-                            </a>
-                        </li>
+                        @if (employee != null)
+                        {
+                        if (employee.Status == "Super Admin")
+                        {
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("Employees", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fas fa-user "></i>
+                                    </span>
+                                    <span class="hide-menu">Employees</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("FeedBacks", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fas fa-comment-dots "></i>
+                                    </span>
+                                    <span class="hide-menu">FeedBacks</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a class="sidebar-link" href="@Url.Action("ContactAdmin", "Admin")" aria-expanded="false">
+                                    <span>
+                                        <i class="fas fa-comment-dots "></i>
+                                    </span>
+                                    <span class="hide-menu">Contact Us</span>
+                                </a>
+                            </li>
+                            }
+                        }
+                       @*@{
+            var controller = ViewContext.RouteData.Values["controller"].ToString();
+            var action = ViewContext.RouteData.Values["action"].ToString();
+
+            var isChatActive = ((controller == "Chat" && action == "Chat") || (controller == "Admin" && action == "patientDoctor"));
+            var isReportActive = ((controller == "Admin" && action == "DoctorReport") || (controller == "Admin" && action == "DoctorReportAdd"));
+        }
+        <li class="sidebar-item @(isReportActive ? "active selected" : "")">
+            <a class="sidebar-link" href="@Url.Action("DoctorReport", "Admin")" aria-expanded="false">
+                <span>
+                    <i class="fa-solid fa-hospital-user"></i>
+                </span>
+                <span class="hide-menu">Doctor Report</span>
+            </a>
+        </li>
+
+
+        <li class="sidebar-item @(isChatActive ? "active selected" : "")">
+            <a class="sidebar-link" href="@Url.Action("Chat", "Chat")" aria-expanded="false">
+                <span>
+                    <i class="fa-solid fa-list-check"></i>
+                </span>
+                <span class="hide-menu">Patient Chat</span>
+            </a>
+        </li>*@
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -181,19 +224,19 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                                     <div class="message-body">
-                                        <a href="@Url.Action("Profile", "Admin", new {id = 1})" class="d-flex align-items-center gap-2 dropdown-item">
+                                        <a href="@Url.Action("Profile", "Admin", new {id = employee.Tech_ID})" class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-user fs-6"></i>
                                             <p class="mb-0 fs-3">My Profile</p>
                                         </a>
-                                        @*<a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                                        <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-mail fs-6"></i>
                                             <p class="mb-0 fs-3">My Account</p>
                                         </a>
                                         <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-list-check fs-6"></i>
                                             <p class="mb-0 fs-3">My Task</p>
-                                        </a>*@
-                                        <a href="./authentication-login.html" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                                        </a>
+                                        <a href="@Url.Action("LogOut", "Admin")" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                                     </div>
                                 </div>
                             </li>

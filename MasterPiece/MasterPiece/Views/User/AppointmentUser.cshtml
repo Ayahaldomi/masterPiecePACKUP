@@ -1,4 +1,11 @@
-﻿@model IEnumerable<MasterPiece.Models.Test>
+﻿
+@{
+    ViewBag.Title = "AppointmentUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@model IEnumerable<MasterPiece.Models.Test>
 
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
@@ -442,12 +449,10 @@
 
 @{
     var testValue = 0;
-}
-@{
-    var testsList = TempData["TestsPackageList"] as List<MasterPiece.Models.Test>;
-    var packagePrice = TempData["PackagePrice"];
 
+    var user = Session["userSession"] as MasterPiece.Models.Patient;
 }
+
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <form id="appointmentForm" action="/Home/CreateAppointment" method="post">
     <div class="wrapper">
@@ -478,24 +483,25 @@
         <div class="form_wrap">
             <div class="form_1 data_info">
                 <h2>Personal Information</h2>
-
+                                                <input type="hidden" value="@user.Patient_ID" /> 
                 <div class="form_container">
                     <div class="input_wrap">
                         <label for="email">Full Name</label>
-                        <input type="text" name="Full_Name" class="input" id="email" required>
+                        <input type="text" name="Full_Name" class="input" id="email" required value="@user.Full_Name">
                     </div>
                     <div class="input_wrap">
                         <label for="password">Date of Birth</label>
-                        <input type="date" name="Date_Of_Birth" class="input" id="password" required>
+                        <input type="date" name="Date_Of_Birth" class="input" id="password" required
+                               value="@(user.Date_Of_Birth.HasValue ? user.Date_Of_Birth.Value.ToString("yyyy-MM-dd") : "")">
                     </div>
                     <div class="input_wrap">
                         <label for="confirm_password">Gender</label>
                         @*<input type="password" name="confirm password" class="input" id="confirm_password">*@
-                        <select class="input" id="gender" name="Gender" required>
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
+                    <select class="input" id="gender" name="Gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male" @(user.Gender == "Male" ? "selected" : "")>Male</option>
+                        <option value="female" @(user.Gender == "Female" ? "selected" : "")>Female</option>
+                    </select>
                     </div>
                 </div>
 
@@ -506,15 +512,15 @@
                 <div class="form_container">
                     <div class="input_wrap">
                         <label for="user_name">Email Address</label>
-                        <input type="email" name="Email_Address" class="input" id="user_name" required>
+                        <input type="email" name="Email_Address" class="input" id="user_name" required value="@user.Email">
                     </div>
                     <div class="input_wrap">
                         <label for="first_name">Phone Number</label>
-                        <input type="number" name="Phone_Number" class="input" id="first_name" required>
+                        <input type="number" name="Phone_Number" class="input" id="first_name" required value="@user.Phone_Number">
                     </div>
                     <div class="input_wrap">
                         <label for="last_name">Home Address</label>
-                        <input type="text" name="Home_Address" class="input" id="last_name" required>
+                        <input type="text" name="Home_Address" class="input" id="last_name" required value="@user.Home_Address">
                     </div>
                 </div>
 
@@ -548,20 +554,19 @@
                     <p id="chosen_time" style="display:none;">Selected Time: <span id="time_value"></span></p>
 
                     <!-- Display additional charge when custom time is selected -->
-                    <p id="additional_charge" style="display:none; text-align:center;">Additional Charge: $20</p>
-                    @if (packagePrice == null)
-                    {
-                        <div class="dropdown">
-                            <input type="text" placeholder="Search.." id="searchInput" onkeyup="filterFunction()" class="search-box">
-                            <div id="dropdownItems" class="dropdown-content">
-                                @foreach (var test in Model)
-                                {
-                                    <a href="#" data-price="@test.Price" onclick="addTestToTable('@test.Test_Name', @test.Price, @test.Test_ID)" title="@test.Description">@test.Test_Name</a>
-                                }
+                    <p id="additional_charge" style="display:none;">Additional Charge: $20</p>
 
-                            </div>
+                    <div class="dropdown">
+                        <input type="text" placeholder="Search.." id="searchInput" onkeyup="filterFunction()" class="search-box">
+                        <div id="dropdownItems" class="dropdown-content">
+                            @foreach (var test in Model)
+                            {
+                                <a href="#" data-price="@test.Price" onclick="addTestToTable('@test.Test_Name', @test.Price, @test.Test_ID)" title="@test.Description">@test.Test_Name</a>
+                            }
+
                         </div>
-                    }
+                    </div>
+
                     <!-- Table to display selected tests -->
                     <table id="selectedTestsTable" class="test-table">
                         <thead>
@@ -770,16 +775,10 @@ window.onload = function () {
         modal_wrapper.classList.add("active");
     })
 
-    //shadow.addEventListener("click", function () {
-    //    modal_wrapper.classList.remove("active");
-    //})
+    shadow.addEventListener("click", function () {
+        modal_wrapper.classList.remove("active");
+    })
 </script>
-
-@using Newtonsoft.Json
-
-
-
-
 
 
 <script>
@@ -888,11 +887,6 @@ window.onload = function () {
             let price = parseFloat(priceText.replace("$", ""));
             total += price;
         }
-        @if (packagePrice != null) {
-            <text>
-            total = @packagePrice;
-        </text>;
-        }
 
         // Add additional charge for custom time if selected
         if (customTimeSelected) {
@@ -946,20 +940,14 @@ window.onload = function () {
         testNameCell.textContent = testName;
         priceCell.textContent = "$" + price;
 
-
-        @if (packagePrice == null) {
-            <text>
-            // Create the remove button
-            let removeBtn = document.createElement("button");
-            removeBtn.classList.add("remove-btn");
-            removeBtn.textContent = "Remove";
-            removeBtn.onclick = function () {
-                removeTestFromTable(newRow, testId); // Call the remove function
-            };
-            actionCell.appendChild(removeBtn);
-            </text>
-            }
-
+        // Create the remove button
+        let removeBtn = document.createElement("button");
+        removeBtn.classList.add("remove-btn");
+        removeBtn.textContent = "Remove";
+        removeBtn.onclick = function () {
+            removeTestFromTable(newRow, testId); // Call the remove function
+        };
+        actionCell.appendChild(removeBtn);
 
         // Append the cells to the new row
         newRow.appendChild(testNameCell);
@@ -1054,7 +1042,18 @@ window.onload = function () {
 
 
 
+    //// Handle PayPal button click
+    //document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
+    //    event.preventDefault(); // Prevent form submission for appointment
 
+    //    // Correctly target the PayPal form
+    //    let paypalForm = document.querySelector('.paypalForm');
+    //    if (paypalForm) {
+    //        paypalForm.submit(); // Submit PayPal form separately
+    //    } else {
+    //        console.error('PayPal form not found');
+    //    }
+    //});
 
 
     document.getElementById('appointmentForm').addEventListener('submit', function (event) {
@@ -1240,19 +1239,22 @@ window.onload = function () {
         }
     }
 
+    //// Handle PayPal form submission inside the modal
+    //document.getElementById('confirmAndPayBtn').addEventListener('click', function (event) {
+    //    event.preventDefault(); // Prevent the form submission if you want to handle further logic
 
+    //    let paypalForm = document.querySelector('.paypalForm');
+    //    if (paypalForm) {
+    //        paypalForm.submit(); // Submit PayPal form separately
+    //    } else {
+    //        console.error('PayPal form not found');
+    //    }
+
+    //    // Close the modal after submission
+    //    modal.style.display = "none";
+    //});
 </script>
 
-<script>
-    @if (TempData["TestsPackageList"] != null) {
-foreach (var test in testsList)
-            {
-               <text>
-    addTestToTable('@test.Test_Name', @test.Price, @test.Test_ID);
-        </text>;
-            }}
-
-</script>
 
 
 
